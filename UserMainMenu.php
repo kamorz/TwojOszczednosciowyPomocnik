@@ -89,7 +89,7 @@
 						
 						</ul>
 						
-						<a class="nav-link contactInvitation"  href="Registration.html">Wyloguj się</a>
+						<a class="nav-link contactInvitation"  href="logout.php">Wyloguj się</a>
 				
 					</div>
 								

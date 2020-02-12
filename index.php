@@ -56,7 +56,7 @@
 						<ul class="navbar-nav mr-auto">
 						
 							<li class="nav-item ml-3">
-								<a class="nav-link" href="MainPage.php"> Start </a>
+								<a class="nav-link" href="index.php"> Start </a>
 							</li>
 							
 							<li class="nav-item ml-3">

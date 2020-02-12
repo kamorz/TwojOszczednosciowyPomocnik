@@ -1,3 +1,15 @@
+<?php
+
+	session_start();
+	
+	if ((isset($_SESSION['isUserLoggedIn'])) && ($_SESSION['isUserLoggedIn']==true))
+	{
+		header('Location: UserMainMenu.php');
+		exit();
+	}
+
+?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -56,15 +68,15 @@
 						<ul class="navbar-nav mr-auto">
 						
 							<li class="nav-item ml-3">
-								<a class="nav-link" href="MainPage.html"> Start </a>
+								<a class="nav-link" href="index.php"> Start </a>
 							</li>
 							
 							<li class="nav-item ml-3 active">
-								<a class="nav-link" href="Login.html"> Logowanie </a>
+								<a class="nav-link" href="Login.php"> Logowanie </a>
 							</li>
 							
 							<li class="nav-item ml-3">
-								<a class="nav-link" href="Registration.html"> Rejestracja </a>
+								<a class="nav-link" href="Registration.php"> Rejestracja </a>
 							</li>
 						
 						</ul>
@@ -84,10 +96,10 @@
 					
 				<h1 class="h2">LOGOWANIE </h1>
 					
-					<form>
+					<form action="Login_check.php" method="post">
 							
 						<div class="input-group mb-3 justify-content-center">
-							<input type="text" id="loginName" placeholder="Podaj swój email" aria-label="Login użytkownika">
+							<input type="text" id="loginName" name="login" placeholder="Podaj swój email" aria-label="Login użytkownika">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-mail"></i></span>
@@ -96,7 +108,7 @@
 
 							
 						<div class="input-group mb-3 justify-content-center">
-							<input type="password" id="loginPassword" placeholder="Podaj swoje hasło" aria-label="Hasło użytkownika">
+							<input type="password" id="loginPassword"  name="pass" placeholder="Podaj swoje hasło" aria-label="Hasło użytkownika">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-lock"></i></span>
@@ -106,6 +118,10 @@
 						<button type="submit" class="btn mb-2 accountIntroduction">ZALOGUJ SIĘ</button>
 							
 					</form>
+					
+					<?php
+					if(isset($_SESSION['loginError']))	echo $_SESSION['loginError'];
+					?>
 					
 				</div>
 			</div>
