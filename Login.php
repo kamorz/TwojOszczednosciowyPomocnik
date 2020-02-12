@@ -119,6 +119,10 @@
 							
 					</form>
 					
+					<?php
+					if(isset($_SESSION['loginError']))	echo $_SESSION['loginError'];
+					?>
+					
 				</div>
 			</div>
 				
