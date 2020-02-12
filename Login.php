@@ -68,15 +68,15 @@
 						<ul class="navbar-nav mr-auto">
 						
 							<li class="nav-item ml-3">
-								<a class="nav-link" href="MainPage.html"> Start </a>
+								<a class="nav-link" href="index.php"> Start </a>
 							</li>
 							
 							<li class="nav-item ml-3 active">
-								<a class="nav-link" href="Login.html"> Logowanie </a>
+								<a class="nav-link" href="Login.php"> Logowanie </a>
 							</li>
 							
 							<li class="nav-item ml-3">
-								<a class="nav-link" href="Registration.html"> Rejestracja </a>
+								<a class="nav-link" href="Registration.php"> Rejestracja </a>
 							</li>
 						
 						</ul>
