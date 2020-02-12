@@ -18,7 +18,20 @@
 	}
 	else
 	{
+		$login = $_POST['login'];
+		$pass = $_POST['pass'];
 		
+		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+		$pass = htmlentities($pass, ENT_QUOTES, "UTF-8");
+		
+		if ($result = @$dbConnection->query(
+		sprintf("SELECT * FROM users WHERE username='%s' AND password='%s'",
+		mysqli_real_escape_string($dbConnection,$login),
+		mysqli_real_escape_string($dbConnection,$pass))))
+		{
+			$howManyUsers = $result->num_rows;
+			echo $howManyUsers;
+		}
 		
 		$dbConnection->close();
 	}
