@@ -1,0 +1,89 @@
+body
+{
+	background: url(img/cork-board.png);
+	color: #000;
+    font-family: 'Courier Prime', monospace;
+    font-size: 21px;
+}
+
+.navbar
+{
+	min-height: 57px;
+	margin-right: 0 !important;
+}
+
+.bg-openMenu
+{
+	background-color: #8D908D !important;
+}
+
+h1
+{
+	font-size: 32px;
+	margin-top: 15px;
+}
+
+.websideTopTxt
+{
+	background-color: #fff !important;
+	font-family: 'Pacifico', cursive;
+	min-height: 70px;
+
+}
+
+.websideTopPct
+{
+	background-color: #fff !important;
+}
+
+
+@media screen and (max-width: 991px)
+{
+	.websideTopPct
+	{
+		display:none !important;
+	}
+}
+
+ul
+{
+	list-style-type:none;
+}
+
+.accountIntroduction
+{
+	background-color: #8D908D !important;
+}
+
+
+
+.contactInvitation
+{
+	color: #fff;
+}
+
+.contactInvitation:hover
+{
+	color: #ddd;
+}
+
+button:hover
+{
+	transform: scale(1.05);
+}
+
+.settingsV
+{
+	visibility: visible;
+}
+
+.settingsNV
+{
+	display:none;
+}
+
+.tab-content
+{
+	font-size: 10px;
+}
+

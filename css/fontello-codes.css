@@ -1,0 +1,23 @@
+
+.icon-ok-circle:before { content: '\e800'; } /* '' */
+.icon-cancel:before { content: '\e801'; } /* '' */
+.icon-cancel-circle:before { content: '\e802'; } /* '' */
+.icon-mail:before { content: '\e803'; } /* '' */
+.icon-cog:before { content: '\e804'; } /* '' */
+.icon-pencil:before { content: '\e805'; } /* '' */
+.icon-lock:before { content: '\e806'; } /* '' */
+.icon-user-1:before { content: '\e807'; } /* '' */
+.icon-mail-1:before { content: '\e808'; } /* '' */
+.icon-clock:before { content: '\e809'; } /* '' */
+.icon-down-circle:before { content: '\e80a'; } /* '' */
+.icon-user:before { content: '\e80b'; } /* '' */
+.icon-up-circle:before { content: '\e80c'; } /* '' */
+.icon-dollar:before { content: '\e80d'; } /* '' */
+.icon-plus:before { content: '\e80e'; } /* '' */
+.icon-trash:before { content: '\e80f'; } /* '' */
+.icon-eye:before { content: '\f082'; } /* '' */
+.icon-facebook:before { content: '\f09a'; } /* '' */
+.icon-menu:before { content: '\f0c9'; } /* '' */
+.icon-help:before { content: '\f128'; } /* '' */
+.icon-address-card-o:before { content: '\f2bc'; } /* '' */
+.icon-visa:before { content: '\f328'; } /* '' */
