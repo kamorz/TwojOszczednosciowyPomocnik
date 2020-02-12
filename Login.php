@@ -1,3 +1,15 @@
+<?php
+
+	session_start();
+	
+	if ((isset($_SESSION['isUserLoggedIn'])) && ($_SESSION['isUserLoggedIn']==true))
+	{
+		header('Location: UserMainMenu.php');
+		exit();
+	}
+
+?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
