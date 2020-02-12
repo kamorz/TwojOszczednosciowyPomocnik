@@ -30,7 +30,25 @@
 		mysqli_real_escape_string($dbConnection,$pass))))
 		{
 			$howManyUsers = $result->num_rows;
-			echo $howManyUsers;
+			if($howManyUsers>0)
+			{
+				$_SESSION['isUserLoggedIn'] = true;
+				
+				$lineWithDatas = $result->fetch_assoc();
+				$_SESSION['loggedUserId'] = $lineWithDatas['id'];
+				$_SESSION['userEmail'] = $lineWithDatas['email'];
+				
+				echo 'Jesteś zalogowany jako użytkownik o id: '.$loggedUserID;
+				
+				unset($_SESSION['loginError']);
+				$result->free_result();
+				
+			} 
+			else 
+			{	
+				$_SESSION['loginError'] = '<span style="color:red">Nieprawidłowy login lub hasło!</span>';
+				header('Location: Login.php');	
+			}
 		}
 		
 		$dbConnection->close();
