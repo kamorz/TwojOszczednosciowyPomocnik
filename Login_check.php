@@ -38,10 +38,10 @@
 				$_SESSION['loggedUserId'] = $lineWithDatas['id'];
 				$_SESSION['userEmail'] = $lineWithDatas['email'];
 				
-				echo 'Jesteś zalogowany jako użytkownik o id: '.$loggedUserID;
 				
 				unset($_SESSION['loginError']);
 				$result->free_result();
+				header('Location: UserMainMenu.php');
 				
 			} 
 			else 
