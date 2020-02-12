@@ -84,10 +84,10 @@
 					
 				<h1 class="h2">LOGOWANIE </h1>
 					
-					<form>
+					<form action="Login_check.php" method="post">
 							
 						<div class="input-group mb-3 justify-content-center">
-							<input type="text" id="loginName" placeholder="Podaj swój email" aria-label="Login użytkownika">
+							<input type="text" id="loginName" name="login" placeholder="Podaj swój email" aria-label="Login użytkownika">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-mail"></i></span>
@@ -96,7 +96,7 @@
 
 							
 						<div class="input-group mb-3 justify-content-center">
-							<input type="password" id="loginPassword" placeholder="Podaj swoje hasło" aria-label="Hasło użytkownika">
+							<input type="password" id="loginPassword"  name="pass" placeholder="Podaj swoje hasło" aria-label="Hasło użytkownika">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-lock"></i></span>
