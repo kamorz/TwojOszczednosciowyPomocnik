@@ -29,8 +29,22 @@
 			$_SESSION['emailError']="Podaj poprawny adres e-mail!";
 		}
 		
+		$pass1 = $_POST['userPassword1'];
+		$pass2 = $_POST['userPassword2'];
 		
-		$passwordHash = $_POST['userPassword1'];
+		if ((strlen($pass1)<5) || (strlen($pass1)>25))
+		{
+			$correctRegistration=false;
+			$_SESSION['passError']="Hasło musi mieć co najmniej 5 i nie więcej niż 25 znaków!";
+		}
+		
+		if ($pass1!=$pass2)
+		{
+			$correctRegistration=false;
+			$_SESSION['passError']="Podane hasła nie są identyczne!";
+		}	
+
+		$passwordHash = password_hash($pass1, PASSWORD_DEFAULT);
 		
 		require_once "connect.php";
 		mysqli_report(MYSQLI_REPORT_STRICT);
@@ -189,14 +203,15 @@
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-mail"></i></span>
 							</div>
-							<?php
-								if (isset($_SESSION['emailError']))
-								{
-									echo '<div style="color: red">'.$_SESSION['emailError'].'</div>';
-									unset($_SESSION['emailError']);
-								}
-							?>
+							
 						</div>
+						<?php
+							if (isset($_SESSION['emailError']))
+							{
+								echo '<div style="color: red">'.$_SESSION['emailError'].'</div>';
+								unset($_SESSION['emailError']);
+							}
+						?>
 
 						<div class="input-group mb-4 justify-content-center">
 							<input type="text" id="registrationName" name="userNick" placeholder="Podaj swój nick" aria-label="Nick użytkownika">
@@ -204,14 +219,15 @@
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-user"></i></span>
 							</div>
-							<?php
+							
+						</div>
+						<?php
 							if (isset($_SESSION['nickError']))
 							{
 								echo '<div style="color: red">'.$_SESSION['nickError'].'</div>';
 								unset($_SESSION['nickError']);
 							}
-							?>
-						</div>
+						?>
 						
 						
 						
@@ -229,7 +245,15 @@
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-lock"></i></span>
 							</div>
+							
 						</div>
+						<?php
+							if (isset($_SESSION['passError']))
+							{
+								echo '<div style="color: red">'.$_SESSION['passError'].'</div>';
+								unset($_SESSION['passError']);
+							}
+						?>
 							
 						<button type="submit" class="btn mb-2 accountIntroduction">ZAŁÓŻ KONTO</button>
 							
