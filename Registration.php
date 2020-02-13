@@ -46,6 +46,11 @@
 
 		$passwordHash = password_hash($pass1, PASSWORD_DEFAULT);
 		
+		$_SESSION['savedNick'] = $nick;
+		$_SESSION['savedEmail'] = $email;
+		$_SESSION['savedPass1'] = $pass1;
+		$_SESSION['savedPass2'] = $pass2;
+		
 		require_once "connect.php";
 		mysqli_report(MYSQLI_REPORT_STRICT);
 		
@@ -198,7 +203,13 @@
 					<form method="post">
 							
 						<div class="input-group mb-3 justify-content-center">
-							<input type="text" id="registrationEmail" name="userEmail" placeholder="Podaj swój email" aria-label="Login użytkownika">
+							<input type="text" id="registrationEmail" name="userEmail" placeholder="Podaj swój email" aria-label="Login użytkownika" value="<?php
+								if (isset($_SESSION['savedEmail']))
+								{
+									echo $_SESSION['savedEmail'];
+									unset($_SESSION['savedEmail']);
+								}
+							?>">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-mail"></i></span>
@@ -214,7 +225,13 @@
 						?>
 
 						<div class="input-group mb-4 justify-content-center">
-							<input type="text" id="registrationName" name="userNick" placeholder="Podaj swój nick" aria-label="Nick użytkownika">
+							<input type="text" id="registrationName" name="userNick" placeholder="Podaj swój nick" aria-label="Nick użytkownika" value="<?php
+								if (isset($_SESSION['savedNick']))
+								{
+									echo $_SESSION['savedNick'];
+									unset($_SESSION['savedNick']);
+								}
+							?>">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-user"></i></span>
@@ -232,7 +249,13 @@
 						
 						
 						<div class="input-group mb-3 justify-content-center">
-							<input type="password" id="registrationPassword" name="userPassword1" placeholder="Podaj swoje hasło" aria-label="Hasło użytkownika">
+							<input type="password" id="registrationPassword" name="userPassword1" placeholder="Podaj swoje hasło" aria-label="Hasło użytkownika" value="<?php
+								if (isset($_SESSION['savedPass1']))
+								{
+									echo $_SESSION['savedPass1'];
+									unset($_SESSION['savedPass1']);
+								}
+							?>">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-lock"></i></span>
@@ -240,7 +263,13 @@
 						</div>
 						
 						<div class="input-group mb-3 justify-content-center">
-							<input type="password" id="registrationConfirmedPassword" name="userPassword2" placeholder="Powtórz hasło" aria-label="Hasło użytkownika powtórzone">
+							<input type="password" id="registrationConfirmedPassword" name="userPassword2" placeholder="Powtórz hasło" aria-label="Hasło użytkownika powtórzone" value="<?php
+								if (isset($_SESSION['savedPass2']))
+								{
+									echo $_SESSION['savedPass2'];
+									unset($_SESSION['savedPass2']);
+								}
+							?>">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-lock"></i></span>
