@@ -15,7 +15,21 @@
 			$_SESSION['nickError']="Nick musi posiadać od 3 do 20 znaków!";
 		}
 		
+		if (ctype_alnum($nick)==false)
+		{
+			$correctRegistration=false;
+			$_SESSION['nickError']="Nick może składać się tylko z liter i cyfr (bez polskich znaków)";
+		}
+		
 		$email = $_POST['userEmail'];
+		$emailFiltered = filter_var($email, FILTER_SANITIZE_EMAIL);
+		if ((filter_var($emailFiltered, FILTER_VALIDATE_EMAIL)==false) || ($emailFiltered!=$email))
+		{
+			$correctRegistration=false;
+			$_SESSION['emailError']="Podaj poprawny adres e-mail!";
+		}
+		
+		
 		$passwordHash = $_POST['userPassword1'];
 		
 		require_once "connect.php";
@@ -175,6 +189,13 @@
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-mail"></i></span>
 							</div>
+							<?php
+								if (isset($_SESSION['emailError']))
+								{
+									echo '<div style="color: red">'.$_SESSION['emailError'].'</div>';
+									unset($_SESSION['emailError']);
+								}
+							?>
 						</div>
 
 						<div class="input-group mb-4 justify-content-center">
@@ -186,7 +207,7 @@
 							<?php
 							if (isset($_SESSION['nickError']))
 							{
-								echo '<div class="error">'.$_SESSION['nickError'].'</div>';
+								echo '<div style="color: red">'.$_SESSION['nickError'].'</div>';
 								unset($_SESSION['nickError']);
 							}
 							?>
