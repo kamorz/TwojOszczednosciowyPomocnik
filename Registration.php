@@ -2,6 +2,81 @@
 
 	session_start();
 	
+	if (isset($_POST['userEmail']))
+	{
+		//Udana walidacja? Załóżmy, że tak!
+		$correctRegistration=true;
+		
+		$nick = $_POST['userNick'];
+		
+		if ((strlen($nick)<3) || (strlen($nick)>20))
+		{
+			$correctRegistration=false;
+			$_SESSION['nickError']="Nick musi posiadać od 3 do 20 znaków!";
+		}
+		
+		$email = $_POST['userEmail'];
+		$passwordHash = $_POST['userPassword1'];
+		
+		require_once "connect.php";
+		mysqli_report(MYSQLI_REPORT_STRICT);
+		
+		try 
+		{
+			$connection = new mysqli($host, $db_user, $db_password, $db_name);
+			if ($connection->connect_errno!=0)
+			{
+				throw new Exception(mysqli_connect_errno());
+			}
+			else
+			{
+				$result = $connection->query("SELECT id FROM users WHERE email='$email'");
+				
+				if (!$result) throw new Exception($connection->error);
+				
+				$emailsAmount= $result->num_rows;
+				if($emailsAmount>0)
+				{
+					$correctRegistration=false;
+					$_SESSION['emailError']="Istnieje już konto powiązane z tym adresem e-mail!";
+				}		
+
+				//Czy nick jest już zarezerwowany?
+				$result = $connection->query("SELECT id FROM users WHERE username='$nick'");
+				
+				if (!$result) throw new Exception($connection->error);
+				
+				$nicksAmount = $result->num_rows;
+				if($nicksAmount>0)
+				{
+					$correctRegistration=false;
+					$_SESSION['nickError']="Ten nick jest już zajęty";
+				}
+				
+				if ($correctRegistration==true)
+				{
+					
+					if ($connection->query("INSERT INTO users VALUES (NULL, '$nick', '$passwordHash', '$email')"))
+					{
+						$_SESSION['registrationSuccess']=true;
+						header('Location: UserMainMenu.php');
+					}
+					else
+					{
+						throw new Exception($connection->error);
+					}	
+				}			
+				$connection->close();
+			}
+			
+		}
+		catch(Exception $e)
+		{
+			echo '<span style="color:red;">Błąd serwera! Przepraszamy za niedogodności i prosimy o rejestrację w innym terminie!</span>';
+			echo '<br />Informacja developerska: '.$e;
+		}
+		
+	}
 	
 	
 ?>
@@ -92,7 +167,7 @@
 					
 				<h1 class="h2">REJESTRACJA </h1>
 					
-					<form>
+					<form method="post">
 							
 						<div class="input-group mb-3 justify-content-center">
 							<input type="text" id="registrationEmail" name="userEmail" placeholder="Podaj swój email" aria-label="Login użytkownika">
@@ -103,12 +178,21 @@
 						</div>
 
 						<div class="input-group mb-4 justify-content-center">
-							<input type="text" id="registrationName" name="userName" placeholder="Podaj swoje imię" aria-label="Imię użytkownika">
+							<input type="text" id="registrationName" name="userNick" placeholder="Podaj swój nick" aria-label="Nick użytkownika">
 								
 							<div class="input-group-append">
 							<span class="input-group-text"><i class="icon-user"></i></span>
 							</div>
+							<?php
+							if (isset($_SESSION['nickError']))
+							{
+								echo '<div class="error">'.$_SESSION['nickError'].'</div>';
+								unset($_SESSION['nickError']);
+							}
+							?>
 						</div>
+						
+						
 						
 						<div class="input-group mb-3 justify-content-center">
 							<input type="password" id="registrationPassword" name="userPassword1" placeholder="Podaj swoje hasło" aria-label="Hasło użytkownika">
