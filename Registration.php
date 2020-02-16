@@ -92,6 +92,7 @@
 					if ($connection->query("INSERT INTO users VALUES (NULL, '$nick', '$passwordHash', '$email')"))
 					{
 						$_SESSION['registrationSuccess']=true;
+						
 						header('Location: UserMainMenu.php');
 					}
 					else

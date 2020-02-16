@@ -1,3 +1,8 @@
+<?php
+session_start();
+
+?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -46,7 +51,7 @@
 			<div class="row">
 				<nav class="navbar navbar-dark bg-openMenu navbar-expand-lg col-12">
 				
-					<a class="navbar-brand" href="#"><i class="icon-dollar"></i> Strona główna </a>
+					<a class="navbar-brand" href="UserMainMenu.html"><i class="icon-dollar"></i> Strona główna </a>
 					
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainmenu" aria-controls="mainmenu" aria-expanded="false" aria-label="Przełącznik nawigacji">
 					<span class="navbar-toggler-icon"></span>
@@ -61,8 +66,8 @@
 								
 								<div class="dropdown-menu" aria-labelledby="submenu1">
 								
-									<a class="dropdown-item" href="AddingIncomes.php"> Dodaj przychód </a>
-									<a class="dropdown-item" href="AddingExpenses.php"> Dodaj wydatek </a>
+									<a class="dropdown-item" href="AddingIncomes.html"> Dodaj przychód </a>
+									<a class="dropdown-item" href="AddingExpenses.html"> Dodaj wydatek </a>
 								
 								</div>
 						
@@ -89,7 +94,7 @@
 						
 						</ul>
 						
-						<a class="nav-link contactInvitation"  href="logout.php">Wyloguj się</a>
+						<a class="nav-link contactInvitation"  href="Registration.html">Wyloguj się</a>
 				
 					</div>
 								
@@ -97,28 +102,50 @@
 			</div>		
 				
 			<div class="row">
-				<div class="col-8 offset-2 col-md-10 offset-md-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
+				<div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 text-center mb-5 mr-0 bg-white loginForm">
 					
-					<div class="row">
+				<h1 class="h2 mb-3">DODAWANIE WYDATKÓW </h1>
 					
-						<div class="col-10 offset-1 col-md-3 offset-md-0 ml-0  my-auto justify-content-center">
-							<img src="img/dollar-bills.jpg" class="img-fluid" alt="Money bills">
+					<form>
+							
+						<div class="form-group col-6 offset-3">
+							<label for="expenseType">Rodzaj wydatku</label>
+							<select class="form-control" id="expenseType" >
+								 <option>Jedzenie</option>
+								 <option>Mieszkanie</option>
+								 <option>Transport</option>
+								 <option>Opieka zdrowotna</option>
+								 <option>Ubranie</option>
+								 <option>Książki/filmy</option>
+								 <option>Wycieczka</option>
+								 <option>Higiena</option>
+								 <option>Dzieci</option>
+								 <option>Spłata długów</option>
+								 <option>Oszczędności</option>
+								 <option>Inne wydatki</option>
+							</select>
+						</div>
+							
+						<div class="form-group col-6 offset-3">
+							<label for="amount">Kwota (zł)</label>
+							<input type="number" class="form-control" id="amount" step="0.01" required>
+						</div>	
+						
+						<div class="form-group col-6 offset-3">
+							<label for="expenseDate">Data</label>
+							<input type="date" class="form-control" id="expenseDate" required>
+							
 						</div>
 						
-						<div class="col-10 offset-1 col-md-5 offset-md-0 ml-0  my-auto justify-content-center">
-							<h2 class="h3">Witaj, Oszczędzaczu!</h2>
-							<p>Cieszymy się, że jesteś z nami- to oznacza, że chcesz zadbać o swoje finanse. Bardzo dobra decyzja! Wybierz z menu, co chciałbyś teraz zrobić.</p>
+						<div class="form-group col-6 offset-3">
+							<label for="extraDescription">Dodatkowy opis</label>
+							<textarea class="form-control" id="extraDescription" rows="2" placeholder="Pole opcjonalne"></textarea>
 						</div>
 						
-						<div class="col-10 offset-1 col-md-4 offset-md-0 mb-2 mx-0 my-md-auto justify-content-center">
-							<ul class="list-group">
-								<li><a href="OperationsOverview.html" class="list-group-item list-group-item-dark list-group-item-action">Przeglądaj wydatki</a></li>
-								<li><a href="AddingExpenses.php" class="list-group-item list-group-item-dark list-group-item-action ">Dodaj wydatek</a><li>
-								<li><a href="AddingIncomes.php" class="list-group-item list-group-item-dark list-group-item-action">Dodaj przychód</a></li>
-								<li><a href="Settings.html" class="list-group-item list-group-item-dark list-group-item-action">Ustawienia konta</a></li>
-							</ul>
-						</div>
-					</div>
+						<button type="submit" class="btn mb-2 accountIntroduction">ZATWIERDŹ</button>
+
+							
+					</form>
 					
 				</div>
 			</div>
