@@ -9,6 +9,7 @@
 	}
 	
 	unset($_SESSION['registrationSuccess']);
+	unset($_SESSION['login Error']);
 	
 	require_once "connect.php";
 

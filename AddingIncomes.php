@@ -1,7 +1,36 @@
 <?php
 session_start();
 
+require_once 'connect.php';
+
+	$currentUserId= $_SESSION['loggedUserId'];
+	
+	mysqli_report(MYSQLI_REPORT_STRICT);
+		
+		try 
+		{
+			$connection = new mysqli($host, $db_user, $db_password, $db_name);
+			if ($connection->connect_errno!=0)
+			{
+				throw new Exception(mysqli_connect_errno());
+			}
+			else
+			{
+				$result = $connection->query("SELECT * FROM incomes_category_assigned_to_users");
+				
+				if (!$result) throw new Exception($connection->error);
+				$_SESSION['categoriesAmount']= $result->num_rows;
+			}
+
+		}
+		catch(Exception $e)
+		{
+			echo '<span style="color:red;">Błąd serwera! Przepraszamy za niedogodności.</span>';
+			echo '<br />Informacja developerska: '.$e;
+		}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -94,7 +123,7 @@ session_start();
 						
 						</ul>
 						
-						<a class="nav-link contactInvitation"  href="Login.php">Wyloguj się</a>
+						<a class="nav-link contactInvitation"  href="index.php">Wyloguj się</a>
 				
 					</div>
 								
@@ -106,15 +135,20 @@ session_start();
 					
 				<h1 class="h2 mb-3">DODAWANIE PRZYCHODÓW </h1>
 					
+					
 					<form>
 							
 						<div class="form-group col-6 offset-3">
 							<label for="incomeType">Rodzaj przychodu</label>
 							<select class="form-control" id="incomeType" >
-								 <option>Wypłata</option>
-								 <option>Odsetki bankowe</option>
-								 <option>Sprzedaż na Allegro</option>
-								 <option>Inne przychody</option>
+							
+									<?php
+									foreach ($_SESSION['categories'] as $category) 
+									{
+										echo "<option>{$category['name']}</option>";
+									}
+									?>
+							
 							</select>
 						</div>
 							
@@ -136,6 +170,11 @@ session_start();
 						
 						<button type="submit" class="btn mb-2 accountIntroduction">ZATWIERDŹ</button>
 						
+
+										<?php
+										echo $_SESSION['categoriesAmount'];
+										?>
+
 							
 					</form>
 					

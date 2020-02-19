@@ -7,6 +7,9 @@
 		//Udana walidacja? Załóżmy, że tak!
 		$correctRegistration=true;
 		
+		unset($_SESSION['registrationSuccess']);
+		unset($_SESSION['loginError']);
+		
 		$nick = $_POST['userNick'];
 		
 		if ((strlen($nick)<3) || (strlen($nick)>20))
@@ -92,6 +95,7 @@
 					if ($connection->query("INSERT INTO users VALUES (NULL, '$nick', '$passwordHash', '$email')"))
 					{
 						$_SESSION['registrationSuccess']=true;		
+						unset($_SESSION['login Error']);
 						$_SESSION['statementAfterRegistrationSuccess']="Konto założone! Możesz teraz się zalogować";						
 						header('Location: Login.php');
 					}
