@@ -8,6 +8,8 @@
 		exit();
 	}
 	
+	unset($_SESSION['registrationSuccess']);
+	
 	require_once "connect.php";
 
 	$dbConnection = @new mysqli($host, $db_user, $db_password, $db_name);

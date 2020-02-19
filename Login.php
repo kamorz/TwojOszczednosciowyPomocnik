@@ -122,6 +122,9 @@
 					<?php
 					if(isset($_SESSION['loginError']))	echo $_SESSION['loginError'];
 					?>
+					<?php
+					if(isset($_SESSION['registrationSuccess'])) echo '<div style="color: green">'.$_SESSION['statementAfterRegistrationSuccess'].'</div>';
+					?>
 					
 				</div>
 			</div>

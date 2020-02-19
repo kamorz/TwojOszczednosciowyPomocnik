@@ -91,9 +91,9 @@
 					
 					if ($connection->query("INSERT INTO users VALUES (NULL, '$nick', '$passwordHash', '$email')"))
 					{
-						$_SESSION['registrationSuccess']=true;
-						
-						header('Location: UserMainMenu.php');
+						$_SESSION['registrationSuccess']=true;		
+						$_SESSION['statementAfterRegistrationSuccess']="Konto założone! Możesz teraz się zalogować";						
+						header('Location: Login.php');
 					}
 					else
 					{
@@ -173,15 +173,15 @@
 						<ul class="navbar-nav mr-auto">
 						
 							<li class="nav-item ml-3">
-								<a class="nav-link" href="#"> Start </a>
+								<a class="nav-link" href="index.php"> Start </a>
 							</li>
 							
 							<li class="nav-item ml-3">
-								<a class="nav-link" href="Login.html"> Logowanie </a>
+								<a class="nav-link" href="Login.php"> Logowanie </a>
 							</li>
 							
 							<li class="nav-item ml-3 active">
-								<a class="nav-link" href="Registration.html"> Rejestracja </a>
+								<a class="nav-link" href="Registration.php"> Rejestracja </a>
 							</li>
 						
 						</ul>
