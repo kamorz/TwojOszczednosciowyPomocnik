@@ -2,6 +2,8 @@
 
 	session_start();
 	
+	unset($_SESSION['loginError']);
+	
 	if (isset($_POST['userEmail']))
 	{
 		//Udana walidacja? Załóżmy, że tak!
