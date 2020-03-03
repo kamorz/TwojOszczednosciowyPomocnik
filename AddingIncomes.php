@@ -109,21 +109,21 @@ require_once 'connect.php';
 								
 								<div class="dropdown-menu" aria-labelledby="submenu2">
 								
-									<a class="dropdown-item" href="OperationsOverview.html#currentMonth-tab"> Bilans obecnego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#selectedPeriod-tab"> Bilans wybranego okresu </a>
+									<a class="dropdown-item" href="OperationsOverview.php#currentMonth-tab"> Bilans obecnego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#selectedPeriod-tab"> Bilans wybranego okresu </a>
 								
 								</div>
 						
 							</li>
 							
 							<li class="nav-item  ml-1">
-								<a class="nav-link" href="Settings.html"> Ustawienia<i class="icon-cog"></i></a>
+								<a class="nav-link" href="Settings.php"> Ustawienia<i class="icon-cog"></i></a>
 							</li>
 						
 						</ul>
 						
-						<a class="nav-link contactInvitation"  href="index.php">Wyloguj się</a>
+						<a class="nav-link contactInvitation"  href="Logout.php">Wyloguj się</a>
 				
 					</div>
 								

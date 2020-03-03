@@ -51,7 +51,7 @@ session_start();
 			<div class="row">
 				<nav class="navbar navbar-dark bg-openMenu navbar-expand-lg col-12">
 				
-					<a class="navbar-brand" href="UserMainMenu.html"><i class="icon-dollar"></i> Strona główna </a>
+					<a class="navbar-brand" href="UserMainMenu.php"><i class="icon-dollar"></i> Strona główna </a>
 					
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainmenu" aria-controls="mainmenu" aria-expanded="false" aria-label="Przełącznik nawigacji">
 					<span class="navbar-toggler-icon"></span>
@@ -66,8 +66,8 @@ session_start();
 								
 								<div class="dropdown-menu" aria-labelledby="submenu1">
 								
-									<a class="dropdown-item" href="AddingIncomes.html"> Dodaj przychód </a>
-									<a class="dropdown-item" href="AddingExpenses.html"> Dodaj wydatek </a>
+									<a class="dropdown-item" href="AddingIncomes.php"> Dodaj przychód </a>
+									<a class="dropdown-item" href="AddingExpenses.php"> Dodaj wydatek </a>
 								
 								</div>
 						
@@ -80,21 +80,21 @@ session_start();
 								
 								<div class="dropdown-menu" aria-labelledby="submenu2">
 								
-									<a class="dropdown-item" href="OperationsOverview.html#currentMonth-tab"> Bilans obecnego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#selectedPeriod-tab"> Bilans wybranego okresu </a>
+									<a class="dropdown-item" href="OperationsOverview.php#currentMonth-tab"> Bilans obecnego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#selectedPeriod-tab"> Bilans wybranego okresu </a>
 								
 								</div>
 						
 							</li>
 							
 							<li class="nav-item  ml-1">
-								<a class="nav-link" href="Settings.html"> Ustawienia<i class="icon-cog"></i></a>
+								<a class="nav-link" href="Settings.php"> Ustawienia<i class="icon-cog"></i></a>
 							</li>
 						
 						</ul>
 						
-						<a class="nav-link contactInvitation"  href="Registration.html">Wyloguj się</a>
+						<a class="nav-link contactInvitation"  href="Logout.php">Wyloguj się</a>
 				
 					</div>
 								
