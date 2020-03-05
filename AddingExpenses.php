@@ -23,6 +23,13 @@
 				if (!$resultCategories) throw new Exception($connection->error);
 				$_SESSION['categoriesAmount']= $resultCategories->num_rows;
 				$_SESSION['categories'] = $resultCategories->fetch_all();
+				
+				
+				$resultPaymentMethods = $connection->query("SELECT * FROM payment_methods_assigned_to_users WHERE user_id=$idForSearching");
+				
+				if (!$resultPaymentMethods) throw new Exception($connection->error);
+				$_SESSION['methodsAmount']= $resultPaymentMethods->num_rows;
+				$_SESSION['paymentMethods'] = $resultPaymentMethods->fetch_all();
 			}
 		
 			if (isset($_POST['category']))
@@ -33,10 +40,15 @@
 				$cash = $_POST['cash'];
 				$paymentMethod = $_POST['paymentMethod'];
 				
-				$resultCategoryId = $connection->query("SELECT id FROM incomes_category_assigned_to_users WHERE user_id=$idForSearching AND name='$category'");
+				$resultCategoryId = $connection->query("SELECT id FROM expenses_category_assigned_to_users WHERE user_id=$idForSearching AND name='$category'");
 				if (!$resultCategoryId) throw new Exception($connection->error);
 				$row = $resultCategoryId->fetch_assoc();
 				$categoryId = $row['id'];
+				
+				$resultPaymentId = $connection->query("SELECT id FROM payment_methods_assigned_to_users WHERE user_id=$idForSearching AND name='$paymentMethod'");
+				if (!$resultPaymentId) throw new Exception($connection->error);
+				$row = $resultPaymentId->fetch_assoc();
+				$paymentMethodId = $row['id'];
 				
 				$connection->query("INSERT INTO expenses VALUES (NULL, '$idForSearching', '$categoryId' ,  '$paymentMethodId',  '$cash', '$date', '$addDesc')");
 				
@@ -193,9 +205,9 @@
 								 
 								 <?php
 										
-										foreach ($_SESSION['categories'] as $ctg) 
+										foreach ($_SESSION['paymentMethods'] as $mtd) 
 										{
-											echo "<option>{$ctg[2]}</option>";
+											echo "<option>{$mtd[2]}</option>";
 										}
 								?>	
 								 
