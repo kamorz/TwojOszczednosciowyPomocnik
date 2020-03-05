@@ -191,15 +191,6 @@ require_once 'connect.php';
 						</div>
 						
 						<button type="submit" class="btn mb-2 accountIntroduction">ZATWIERDŹ</button>
-						
-
-										<?php
-										
-										echo $_SESSION['categoriesAmount'].'  ';
-										
-										echo $_SESSION['currentUserId'];
-										
-										?>
 
 							
 					</form>
