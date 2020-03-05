@@ -1,7 +1,58 @@
 <?php
-session_start();
+	session_start();
 
-require_once 'connect.php';
+	require_once 'connect.php';
+
+	$_SESSION['currentUserId']= $_SESSION['loggedUserId'];
+	$idForSearching= $_SESSION['loggedUserId'];
+
+	mysqli_report(MYSQLI_REPORT_STRICT);
+
+	try
+	{
+		$connection = new mysqli($host, $db_user, $db_password, $db_name);
+		if ($connection->connect_errno!=0)
+		{
+			throw new Exception(mysqli_connect_errno());
+		}
+		
+		else
+			{
+				$resultCategories = $connection->query("SELECT * FROM expenses_category_assigned_to_users WHERE user_id=$idForSearching");
+				
+				if (!$resultCategories) throw new Exception($connection->error);
+				$_SESSION['categoriesAmount']= $resultCategories->num_rows;
+				$_SESSION['categories'] = $resultCategories->fetch_all();
+			}
+		
+			if (isset($_POST['category']))
+			{
+				$category = $_POST['category'];
+				$date = $_POST['date'];
+				$addDesc = $_POST['addDesc'];
+				$cash = $_POST['cash'];
+				$paymentMethod = $_POST['paymentMethod'];
+				
+				$resultCategoryId = $connection->query("SELECT id FROM incomes_category_assigned_to_users WHERE user_id=$idForSearching AND name='$category'");
+				if (!$resultCategoryId) throw new Exception($connection->error);
+				$row = $resultCategoryId->fetch_assoc();
+				$categoryId = $row['id'];
+				
+				$connection->query("INSERT INTO expenses VALUES (NULL, '$idForSearching', '$categoryId' ,  '$paymentMethodId',  '$cash', '$date', '$addDesc')");
+				
+				header('Location: UserMainMenu.php');
+			}
+		
+		$connection->close();
+	}
+	
+		
+		
+	catch(Exception $e)
+	{
+		echo '<span style="color:red;">Błąd serwera! Przepraszamy za niedogodności.</span>';
+		echo '<br />Informacja developerska: '.$e;
+	}
 
 ?>
 
@@ -108,40 +159,52 @@ require_once 'connect.php';
 					
 				<h1 class="h2 mb-3">DODAWANIE WYDATKÓW </h1>
 					
-					<form>
+					<form method="post">
 							
 						<div class="form-group col-6 offset-3">
 							<label for="expenseType">Rodzaj wydatku</label>
-							<select class="form-control" id="expenseType" >
-								 <option>Jedzenie</option>
-								 <option>Mieszkanie</option>
-								 <option>Transport</option>
-								 <option>Opieka zdrowotna</option>
-								 <option>Ubranie</option>
-								 <option>Książki/filmy</option>
-								 <option>Wycieczka</option>
-								 <option>Higiena</option>
-								 <option>Dzieci</option>
-								 <option>Spłata długów</option>
-								 <option>Oszczędności</option>
-								 <option>Inne wydatki</option>
+							<select class="form-control" id="expenseType" name="category" >
+								 
+								 <?php
+										
+										foreach ($_SESSION['categories'] as $ctg) 
+										{
+											echo "<option>{$ctg[2]}</option>";
+										}
+								?>	
+								 
 							</select>
 						</div>
 							
 						<div class="form-group col-6 offset-3">
 							<label for="amount">Kwota (zł)</label>
-							<input type="number" class="form-control" id="amount" step="0.01" required>
+							<input type="number" class="form-control" id="amount" step="0.01" name="cash" required>
 						</div>	
 						
 						<div class="form-group col-6 offset-3">
 							<label for="expenseDate">Data</label>
-							<input type="date" class="form-control" id="expenseDate" required>
+							<input type="date" class="form-control" id="expenseDate" name="date" required>
 							
 						</div>
 						
 						<div class="form-group col-6 offset-3">
+							<label for="paymentType">Metoda płatności</label>
+							<select class="form-control" id="paymentType" name="paymentMethod" >
+								 
+								 <?php
+										
+										foreach ($_SESSION['categories'] as $ctg) 
+										{
+											echo "<option>{$ctg[2]}</option>";
+										}
+								?>	
+								 
+							</select>
+						</div>
+						
+						<div class="form-group col-6 offset-3">
 							<label for="extraDescription">Dodatkowy opis</label>
-							<textarea class="form-control" id="extraDescription" rows="2" placeholder="Pole opcjonalne"></textarea>
+							<textarea class="form-control" id="extraDescription" rows="2" name="addDesc" placeholder="Pole opcjonalne"></textarea>
 						</div>
 						
 						<button type="submit" class="btn mb-2 accountIntroduction">ZATWIERDŹ</button>
