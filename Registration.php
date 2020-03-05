@@ -2,6 +2,8 @@
 
 	session_start();
 	
+	unset($_SESSION['loginError']);
+	
 	if (isset($_POST['userEmail']))
 	{
 		//Udana walidacja? Załóżmy, że tak!
@@ -96,7 +98,44 @@
 					{
 						$_SESSION['registrationSuccess']=true;		
 						unset($_SESSION['login Error']);
-						$_SESSION['statementAfterRegistrationSuccess']="Konto założone! Możesz teraz się zalogować";						
+						$_SESSION['statementAfterRegistrationSuccess']="Konto założone! Możesz teraz się zalogować";			
+
+					
+						//Pobranie kategorii
+						$resultId = $connection->query("SELECT id FROM users WHERE username='$nick'");
+						if (!$resultId) throw new Exception($connection->error);
+						$row = $resultId->fetch_assoc();
+						$nickNumber = $row['id'];
+						
+						
+						$resultIncomeCategories = $connection->query("SELECT * FROM incomes_category_default");
+						if (!$resultIncomeCategories) throw new Exception($connection->error);
+						while ($row = $resultIncomeCategories->fetch_assoc())
+						{
+							$categoryName = $row['name'];
+							$connection->query("INSERT INTO incomes_category_assigned_to_users VALUES (NULL, '$nickNumber', '$categoryName')");
+						}
+						
+						$resultExpenseCategories = $connection->query("SELECT * FROM expenses_category_default");
+						if (!$resultExpenseCategories) throw new Exception($connection->error);
+						while ($row = $resultExpenseCategories->fetch_assoc())
+						{
+							$categoryName = $row['name'];
+							$connection->query("INSERT INTO expenses_category_assigned_to_users VALUES (NULL, '$nickNumber', '$categoryName')");
+						}
+						
+						$resultPaymentMethods = $connection->query("SELECT * FROM payment_methods_default");
+						if (!$resultPaymentMethods) throw new Exception($connection->error);
+						while ($row = $resultPaymentMethods->fetch_assoc())
+						{
+							$paymentMethodName = $row['name'];
+							$connection->query("INSERT INTO payment_methods_assigned_to_users VALUES (NULL, '$nickNumber', '$paymentMethodName')");
+						}
+						
+						
+						//koniec
+
+						
 						header('Location: Login.php');
 					}
 					else

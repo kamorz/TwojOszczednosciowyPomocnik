@@ -3,7 +3,8 @@ session_start();
 
 require_once 'connect.php';
 
-	$currentUserId= $_SESSION['loggedUserId'];
+	$_SESSION['currentUserId']= $_SESSION['loggedUserId'];
+	$idForSearching= $_SESSION['loggedUserId'];
 	
 	mysqli_report(MYSQLI_REPORT_STRICT);
 		
@@ -16,12 +17,32 @@ require_once 'connect.php';
 			}
 			else
 			{
-				$result = $connection->query("SELECT * FROM incomes_category_assigned_to_users");
+				$result = $connection->query("SELECT * FROM incomes_category_assigned_to_users WHERE user_id=$idForSearching");
 				
 				if (!$result) throw new Exception($connection->error);
 				$_SESSION['categoriesAmount']= $result->num_rows;
+				$_SESSION['categories'] = $result->fetch_all();
 			}
-
+			
+			if (isset($_POST['category']))
+			{
+				$category = $_POST['category'];
+				$date = $_POST['date'];
+				$addDesc = $_POST['addDesc'];
+				$cash = $_POST['cash'];
+				
+				$result2 = $connection->query("SELECT id FROM incomes_category_assigned_to_users WHERE user_id=$idForSearching AND name='$category'");
+				if (!$result2) throw new Exception($connection->error);
+				$row = $result2->fetch_assoc();
+				$categoryId = $row['id'];
+				
+				$connection->query("INSERT INTO incomes VALUES (NULL, '$idForSearching', '$categoryId' , '$cash', '$date', '$addDesc')");
+				
+				header('Location: UserMainMenu.php');
+			}
+		
+		$connection->close();
+		
 		}
 		catch(Exception $e)
 		{
@@ -109,21 +130,21 @@ require_once 'connect.php';
 								
 								<div class="dropdown-menu" aria-labelledby="submenu2">
 								
-									<a class="dropdown-item" href="OperationsOverview.html#currentMonth-tab"> Bilans obecnego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#selectedPeriod-tab"> Bilans wybranego okresu </a>
+									<a class="dropdown-item" href="OperationsOverview.php#currentMonth-tab"> Bilans obecnego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#selectedPeriod-tab"> Bilans wybranego okresu </a>
 								
 								</div>
 						
 							</li>
 							
 							<li class="nav-item  ml-1">
-								<a class="nav-link" href="Settings.html"> Ustawienia<i class="icon-cog"></i></a>
+								<a class="nav-link" href="Settings.php"> Ustawienia<i class="icon-cog"></i></a>
 							</li>
 						
 						</ul>
 						
-						<a class="nav-link contactInvitation"  href="index.php">Wyloguj się</a>
+						<a class="nav-link contactInvitation"  href="Logout.php">Wyloguj się</a>
 				
 					</div>
 								
@@ -136,44 +157,40 @@ require_once 'connect.php';
 				<h1 class="h2 mb-3">DODAWANIE PRZYCHODÓW </h1>
 					
 					
-					<form>
+					<form method="post">
 							
 						<div class="form-group col-6 offset-3">
 							<label for="incomeType">Rodzaj przychodu</label>
-							<select class="form-control" id="incomeType" >
+							<select class="form-control" id="incomeType" name="category">
 							
-									<?php
-									foreach ($_SESSION['categories'] as $category) 
-									{
-										echo "<option>{$category['name']}</option>";
-									}
-									?>
+								<?php
+										
+										foreach ($_SESSION['categories'] as $ctg) 
+										{
+											echo "<option>{$ctg[2]}</option>";
+										}
+									?>	
 							
 							</select>
 						</div>
 							
 						<div class="form-group col-6 offset-3">
 							<label for="amount">Kwota (zł)</label>
-							<input type="number" class="form-control" id="amount" step="0.01" required>
+							<input type="number" class="form-control" id="amount" step="0.01" name="cash" required>
 						</div>	
 						
 						<div class="form-group col-6 offset-3">
 							<label for="incomeDate">Data</label>
-							<input type="date" class="form-control" id="incomeDate" required>
+							<input type="date" class="form-control" id="incomeDate" name="date" required>
 							
 						</div>
 						
 						<div class="form-group col-6 offset-3">
 							<label for="extraDescription">Dodatkowy opis</label>
-							<textarea class="form-control" id="extraDescription" rows="2" placeholder="Pole opcjonalne"></textarea>
+							<textarea class="form-control" id="extraDescription"  name="addDesc" rows="2" placeholder="Pole opcjonalne"></textarea>
 						</div>
 						
 						<button type="submit" class="btn mb-2 accountIntroduction">ZATWIERDŹ</button>
-						
-
-										<?php
-										echo $_SESSION['categoriesAmount'];
-										?>
 
 							
 					</form>

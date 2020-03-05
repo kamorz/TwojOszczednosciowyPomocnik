@@ -1,5 +1,70 @@
 <?php
-session_start();
+	session_start();
+
+	require_once 'connect.php';
+
+	$_SESSION['currentUserId']= $_SESSION['loggedUserId'];
+	$idForSearching= $_SESSION['loggedUserId'];
+
+	mysqli_report(MYSQLI_REPORT_STRICT);
+
+	try
+	{
+		$connection = new mysqli($host, $db_user, $db_password, $db_name);
+		if ($connection->connect_errno!=0)
+		{
+			throw new Exception(mysqli_connect_errno());
+		}
+		
+		else
+			{
+				$resultCategories = $connection->query("SELECT * FROM expenses_category_assigned_to_users WHERE user_id=$idForSearching");
+				
+				if (!$resultCategories) throw new Exception($connection->error);
+				$_SESSION['categoriesAmount']= $resultCategories->num_rows;
+				$_SESSION['categories'] = $resultCategories->fetch_all();
+				
+				
+				$resultPaymentMethods = $connection->query("SELECT * FROM payment_methods_assigned_to_users WHERE user_id=$idForSearching");
+				
+				if (!$resultPaymentMethods) throw new Exception($connection->error);
+				$_SESSION['methodsAmount']= $resultPaymentMethods->num_rows;
+				$_SESSION['paymentMethods'] = $resultPaymentMethods->fetch_all();
+			}
+		
+			if (isset($_POST['category']))
+			{
+				$category = $_POST['category'];
+				$date = $_POST['date'];
+				$addDesc = $_POST['addDesc'];
+				$cash = $_POST['cash'];
+				$paymentMethod = $_POST['paymentMethod'];
+				
+				$resultCategoryId = $connection->query("SELECT id FROM expenses_category_assigned_to_users WHERE user_id=$idForSearching AND name='$category'");
+				if (!$resultCategoryId) throw new Exception($connection->error);
+				$row = $resultCategoryId->fetch_assoc();
+				$categoryId = $row['id'];
+				
+				$resultPaymentId = $connection->query("SELECT id FROM payment_methods_assigned_to_users WHERE user_id=$idForSearching AND name='$paymentMethod'");
+				if (!$resultPaymentId) throw new Exception($connection->error);
+				$row = $resultPaymentId->fetch_assoc();
+				$paymentMethodId = $row['id'];
+				
+				$connection->query("INSERT INTO expenses VALUES (NULL, '$idForSearching', '$categoryId' ,  '$paymentMethodId',  '$cash', '$date', '$addDesc')");
+				
+				header('Location: UserMainMenu.php');
+			}
+		
+		$connection->close();
+	}
+	
+		
+		
+	catch(Exception $e)
+	{
+		echo '<span style="color:red;">Błąd serwera! Przepraszamy za niedogodności.</span>';
+		echo '<br />Informacja developerska: '.$e;
+	}
 
 ?>
 
@@ -51,7 +116,7 @@ session_start();
 			<div class="row">
 				<nav class="navbar navbar-dark bg-openMenu navbar-expand-lg col-12">
 				
-					<a class="navbar-brand" href="UserMainMenu.html"><i class="icon-dollar"></i> Strona główna </a>
+					<a class="navbar-brand" href="UserMainMenu.php"><i class="icon-dollar"></i> Strona główna </a>
 					
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainmenu" aria-controls="mainmenu" aria-expanded="false" aria-label="Przełącznik nawigacji">
 					<span class="navbar-toggler-icon"></span>
@@ -66,8 +131,8 @@ session_start();
 								
 								<div class="dropdown-menu" aria-labelledby="submenu1">
 								
-									<a class="dropdown-item" href="AddingIncomes.html"> Dodaj przychód </a>
-									<a class="dropdown-item" href="AddingExpenses.html"> Dodaj wydatek </a>
+									<a class="dropdown-item" href="AddingIncomes.php"> Dodaj przychód </a>
+									<a class="dropdown-item" href="AddingExpenses.php"> Dodaj wydatek </a>
 								
 								</div>
 						
@@ -80,21 +145,21 @@ session_start();
 								
 								<div class="dropdown-menu" aria-labelledby="submenu2">
 								
-									<a class="dropdown-item" href="OperationsOverview.html#currentMonth-tab"> Bilans obecnego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#selectedPeriod-tab"> Bilans wybranego okresu </a>
+									<a class="dropdown-item" href="OperationsOverview.php#currentMonth-tab"> Bilans obecnego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#selectedPeriod-tab"> Bilans wybranego okresu </a>
 								
 								</div>
 						
 							</li>
 							
 							<li class="nav-item  ml-1">
-								<a class="nav-link" href="Settings.html"> Ustawienia<i class="icon-cog"></i></a>
+								<a class="nav-link" href="Settings.php"> Ustawienia<i class="icon-cog"></i></a>
 							</li>
 						
 						</ul>
 						
-						<a class="nav-link contactInvitation"  href="Registration.html">Wyloguj się</a>
+						<a class="nav-link contactInvitation"  href="Logout.php">Wyloguj się</a>
 				
 					</div>
 								
@@ -106,40 +171,52 @@ session_start();
 					
 				<h1 class="h2 mb-3">DODAWANIE WYDATKÓW </h1>
 					
-					<form>
+					<form method="post">
 							
 						<div class="form-group col-6 offset-3">
 							<label for="expenseType">Rodzaj wydatku</label>
-							<select class="form-control" id="expenseType" >
-								 <option>Jedzenie</option>
-								 <option>Mieszkanie</option>
-								 <option>Transport</option>
-								 <option>Opieka zdrowotna</option>
-								 <option>Ubranie</option>
-								 <option>Książki/filmy</option>
-								 <option>Wycieczka</option>
-								 <option>Higiena</option>
-								 <option>Dzieci</option>
-								 <option>Spłata długów</option>
-								 <option>Oszczędności</option>
-								 <option>Inne wydatki</option>
+							<select class="form-control" id="expenseType" name="category" >
+								 
+								 <?php
+										
+										foreach ($_SESSION['categories'] as $ctg) 
+										{
+											echo "<option>{$ctg[2]}</option>";
+										}
+								?>	
+								 
 							</select>
 						</div>
 							
 						<div class="form-group col-6 offset-3">
 							<label for="amount">Kwota (zł)</label>
-							<input type="number" class="form-control" id="amount" step="0.01" required>
+							<input type="number" class="form-control" id="amount" step="0.01" name="cash" required>
 						</div>	
 						
 						<div class="form-group col-6 offset-3">
 							<label for="expenseDate">Data</label>
-							<input type="date" class="form-control" id="expenseDate" required>
+							<input type="date" class="form-control" id="expenseDate" name="date" required>
 							
 						</div>
 						
 						<div class="form-group col-6 offset-3">
+							<label for="paymentType">Metoda płatności</label>
+							<select class="form-control" id="paymentType" name="paymentMethod" >
+								 
+								 <?php
+										
+										foreach ($_SESSION['paymentMethods'] as $mtd) 
+										{
+											echo "<option>{$mtd[2]}</option>";
+										}
+								?>	
+								 
+							</select>
+						</div>
+						
+						<div class="form-group col-6 offset-3">
 							<label for="extraDescription">Dodatkowy opis</label>
-							<textarea class="form-control" id="extraDescription" rows="2" placeholder="Pole opcjonalne"></textarea>
+							<textarea class="form-control" id="extraDescription" rows="2" name="addDesc" placeholder="Pole opcjonalne"></textarea>
 						</div>
 						
 						<button type="submit" class="btn mb-2 accountIntroduction">ZATWIERDŹ</button>

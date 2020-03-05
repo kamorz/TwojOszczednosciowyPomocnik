@@ -28,24 +28,32 @@
 		$pass = htmlentities($pass, ENT_QUOTES, "UTF-8");
 		
 		if ($result = @$dbConnection->query(
-		sprintf("SELECT * FROM users WHERE username='%s' AND password='%s'",
-		mysqli_real_escape_string($dbConnection,$login),
-		mysqli_real_escape_string($dbConnection,$pass))))
+		sprintf("SELECT * FROM users WHERE username='%s'",
+		mysqli_real_escape_string($dbConnection,$login))))
 		{
 			$howManyUsers = $result->num_rows;
 			if($howManyUsers>0)
 			{
-				$_SESSION['isUserLoggedIn'] = true;
-				
 				$lineWithDatas = $result->fetch_assoc();
-				$_SESSION['loggedUserId'] = $lineWithDatas['id'];
-				$_SESSION['userEmail'] = $lineWithDatas['email'];
 				
-				
-				unset($_SESSION['loginError']);
-				$result->free_result();
-				header('Location: UserMainMenu.php');
-				
+				if (password_verify($pass, $lineWithDatas['password']))
+				{
+					$_SESSION['isUserLoggedIn'] = true;
+					
+					
+					$_SESSION['loggedUserId'] = $lineWithDatas['id'];
+					$_SESSION['userEmail'] = $lineWithDatas['email'];
+					
+					
+					unset($_SESSION['loginError']);
+					$result->free_result();
+					header('Location: UserMainMenu.php');
+				}
+				else
+				{
+					$_SESSION['loginError'] = '<span style="color:red">Nieprawidłowy login lub hasło!</span>';
+					header('Location: Login.php');
+				}
 			} 
 			else 
 			{	

@@ -4,6 +4,8 @@
 	
 	session_unset();
 	
+	unset($_SESSION['isUserLoggedIn']);
+	
 	header('Location: Login.php');
 
 ?>
