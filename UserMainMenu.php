@@ -1,3 +1,14 @@
+<?php
+	session_start();
+
+	if (!isset($_SESSION['isUserLoggedIn']))
+	{
+		header('Location: index.php');
+		exit();
+	}
+	
+?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -75,9 +86,9 @@
 								
 								<div class="dropdown-menu" aria-labelledby="submenu2">
 								
-									<a class="dropdown-item" href="OperationsOverview.html#currentMonth-tab"> Bilans obecnego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.html#selectedPeriod-tab"> Bilans wybranego okresu </a>
+									<a class="dropdown-item" href="OperationsOverview.php#currentMonth-tab"> Bilans obecnego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
+									<a class="dropdown-item" href="OperationsOverview.php#selectedPeriod-tab"> Bilans wybranego okresu </a>
 								
 								</div>
 						

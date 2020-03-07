@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+	if (!isset($_SESSION['isUserLoggedIn']))
+	{
+		header('Location: index.php');
+		exit();
+	}
+
 require_once 'connect.php';
 
 	$_SESSION['currentUserId']= $_SESSION['loggedUserId'];
