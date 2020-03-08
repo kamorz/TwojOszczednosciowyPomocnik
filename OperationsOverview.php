@@ -7,6 +7,7 @@
 		exit();
 	}
 	$currentMonth = date("m");
+	$previousMonth = date("m")-1;
 
 	require_once 'connect.php';
 
@@ -24,10 +25,27 @@
 		}
 		else
 			{
-				$resultCurrentMonthIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$currentMonth'");
-				
+				$resultCurrentMonthIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$currentMonth'");				
 				if (!$resultCurrentMonthIncomes) throw new Exception($connection->error);
 				$_SESSION['currentMonthIncomes'] = $resultCurrentMonthIncomes->fetch_all();
+				
+				//NIE WIADOMO, CZY DOBRZE
+				
+				$_SESSION['resultCurrentMonthIncomesSum'] = $connection->query("SELECT SUM(amount) FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$currentMonth'");
+				
+				//DOTĄD
+				
+				$resultCurrentMonthExpenses = $connection->query("SELECT * FROM `expenses` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_expense) = '$currentMonth'");				
+				if (!$resultCurrentMonthExpenses) throw new Exception($connection->error);
+				$_SESSION['currentMonthExpenses'] = $resultCurrentMonthExpenses->fetch_all();
+				
+				$resultPreviousMonthIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$previousMonth'");				
+				if (!$resultPreviousMonthIncomes) throw new Exception($connection->error);
+				$_SESSION['previousMonthIncomes'] = $resultPreviousMonthIncomes->fetch_all();
+				
+				$resultPreviousMonthExpenses = $connection->query("SELECT * FROM `expenses` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_expense) = '$previousMonth'");				
+				if (!$resultPreviousMonthExpenses) throw new Exception($connection->error);
+				$_SESSION['previousMonthExpenses'] = $resultPreviousMonthExpenses->fetch_all();
 			
 			}
 		
@@ -173,15 +191,15 @@
 						
 									<div class="row">
 										
-										<div class="col-12 col-lg-6 offset-lg-0 text-center mb-5 mt-lg-3 mr-0 bg-white">
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
 										
-											<h1 class="h3">Przegląd wydatków</h1>
+											<h1 class="h3">Przegląd przychodów</h1>
 											
 											<table class="table table-bordered">
 											  <thead>
 													<tr>
 													  <th>Data</th>
-													  <th>Wydatek</th>
+													  <th>Przychód</th>
 													  <th>Kwota</th>
 													  <th>Opis</th>
 													</tr>
@@ -196,51 +214,35 @@
 												?>
 											  </tbody>
 											</table>
-											Suma wydatków: 100,00zł
+											<?php
+											echo "Suma przychodów: ";
+											?>
 											
 										</div>
 										
-										<div class="col-12 col-lg-6 offset-lg-0 text-center mb-5 mt-lg-3 mr-0 bg-white">
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
 											
 											
-											<h1 class="h3">Przegląd przychodów</h1>
+											<h1 class="h3">Przegląd wydatków</h1>
 											
 											<table class="table table-bordered">
 											  <thead>
-												<tr>
-												  <th>#</th>
-												  <th>Data</th>
-												  <th>Wydatek</th>
-												  <th>Kwota</th>
-												  <th>Opis</th>
-												  <th>#</th>
-												</tr>
+													<tr>
+													  <th>Data</th>
+													  <th>Wydatek</th>
+													  <th>Kwota</th>
+													  <th>Sposób płatności</th>
+													  <th>Opis</th>
+													</tr>
+												
 											  </thead>
 											  <tbody>
-												<tr>
-												  <th scope="row">1</th>
-												  <td>01-01</td>
-												  <td>Wypłata</td>
-												  <td>5200,00</td>
-												  <td></td>
-												  <td>
-													<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-													<i class="icon-trash"></i>
-													</button>
-												  </td>
-												</tr>
-												<tr>
-												  <th scope="row">2</th>
-												  <td>03-01</td>
-												  <td>Sprzedaż na Allegro</td>
-												  <td>90,00</td>
-												  <td>Sprzedaż nart</td>
-												  <td>
-													<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-													<i class="icon-trash"></i>
-													</button>
-												  </td>
-												</tr>
+												<?php
+												foreach ($_SESSION['currentMonthExpenses'] as $expense) 
+												{
+													echo "<tr><td>{$expense[5]}</td><td>{$expense[2]}</td><td>{$expense[4]}</td><td>{$expense[3]}</td><td>{$expense[6]}</td></tr>"; 
+												}
+												?>
 											  </tbody>
 											</table>
 											Suma przychodów: 1000,00zł
@@ -264,106 +266,45 @@
 						
 									<div class="row">
 										
-										<div class="col-12 col-lg-6 offset-lg-0 text-center mb-5 mt-lg-3 mr-0 bg-white">
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
 										
-											<h1 class="h3">Przegląd wydatków</h1>
+											<h1 class="h3">Przegląd przychodów</h1>
 											
 											<table class="table table-bordered">
 											  <thead>
-												<tr>
-												  <th>#</th>
-												  <th>Data</th>
-												  <th>Wydatek</th>
-												  <th>Kwota</th>
-												  <th>Opis</th>
-												  <th>#</th>
-												</tr>
+													<tr>
+													  <th>Data</th>
+													  <th>Przychód</th>
+													  <th>Kwota</th>
+													  <th>Opis</th>
+													</tr>
+												
 											  </thead>
 											  <tbody>
-												<tr>
-													<th scope="row">1</th>
-													<td>01-12</td>
-													<td>Jedzenie</td>
-													<td>20,00</td>
-													<td>Zakupy Lidl</td>
-													<td>
-														<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-														<i class="icon-trash"></i>
-														</button>
-													</td>
-												</tr>
-												<tr>
-												  <th scope="row">2</th>
-												  <td>03-12</td>
-												  <td>Edukacja</td>
-												  <td>90,00</td>
-												  <td>Lekcja tańca</td>
-												  <td>
-													<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-													<i class="icon-trash"></i>
-													</button>
-												  </td>
-												</tr>
-												<tr>
-												  <th scope="row">3</th>
-												  <td>07-12</td>
-												  <td>Dom</td>
-												  <td>12,90</td>
-												  <td>Wycieraczka</td>
-												  <td>
-													<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-													<i class="icon-trash"></i>
-													</button>
-												  </td>
-												</tr>
+												<?php
+												foreach ($_SESSION['previousMonthIncomes'] as $income) 
+												{
+													echo "<tr><td>{$income[4]}</td><td>{$income[2]}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+												}
+												?>
 											  </tbody>
 											</table>
 											Suma wydatków: 200,00zł
 											
 										</div>
 										
-										<div class="col-12 col-lg-6 offset-lg-0 text-center mb-5 mt-lg-3 mr-0 bg-white">
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
 											
 											
 											<h1 class="h3">Przegląd przychodów</h1>
 											
 											<table class="table table-bordered">
-											  <thead>
-												<tr>
-												  <th>#</th>
-												  <th>Data</th>
-												  <th>Wydatek</th>
-												  <th>Kwota</th>
-												  <th>Opis</th>
-												  <th>#</th>
-												</tr>
-											  </thead>
-											  <tbody>
-												<tr>
-												  <th scope="row">1</th>
-												  <td>01-12</td>
-												  <td>Wypłata</td>
-												  <td>5000,00</td>
-												  <td></td>
-												  <td>
-													<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-													<i class="icon-trash"></i>
-													</button>
-												  </td>
-												</tr>
-												<tr>
-												  <th scope="row">2</th>
-												  <td>03-01</td>
-												  <td>Odsetki bankowe</td>
-												  <td>190,00</td>
-												  <td>Santander Bank</td>
-												  <td>
-													<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-													<i class="icon-trash"></i>
-													</button>
-												  </td>
-												</tr>
-											  </tbody>
+											  <?php
+												foreach ($_SESSION['previousMonthExpenses'] as $expense) 
+												{
+													echo "<tr><td>{$expense[5]}</td><td>{$expense[2]}</td><td>{$expense[4]}</td><td>{$expense[3]}</td><td>{$expense[6]}</td></tr>"; 
+												}
+												?>
 											</table>
 											Suma przychodów: 1200,00zł
 										
@@ -407,7 +348,7 @@
 						
 									<div class="row">
 										
-										<div class="col-12 col-lg-6 offset-lg-0 text-center mb-5 mt-lg-3 mr-0 bg-white">
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
 										
 											<h1 class="h3">Przegląd wydatków</h1>
 											
@@ -477,7 +418,7 @@
 											
 										</div>
 										
-										<div class="col-12 col-lg-6 offset-lg-0 text-center mb-5 mt-lg-3 mr-0 bg-white">
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
 											
 											
 											<h1 class="h3">Przegląd przychodów</h1>
