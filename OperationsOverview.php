@@ -13,6 +13,8 @@
 	$SESSION_['currentMonthExpenseSum']=0;
 	$SESSION_['previousMonthIncomeSum']=0;
 	$SESSION_['previousMonthExpenseSum']=0;
+	$SESSION_['selectedPeriodIncomeSum']=0;
+	$SESSION_['selectedPeriodExpenseSum']=0;
 
 	require_once 'connect.php';
 
@@ -34,23 +36,30 @@
 				if (!$resultCurrentMonthIncomes) throw new Exception($connection->error);
 				$_SESSION['currentMonthIncomes'] = $resultCurrentMonthIncomes->fetch_all();
 				
-				//NIE WIADOMO, CZY DOBRZE
-				
-				$_SESSION['resultCurrentMonthIncomesSum'] = $connection->query("SELECT SUM(amount) FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$currentMonth'");
-				
-				//DOTĄD
 				
 				$resultCurrentMonthExpenses = $connection->query("SELECT * FROM `expenses` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_expense) = '$currentMonth'");				
 				if (!$resultCurrentMonthExpenses) throw new Exception($connection->error);
 				$_SESSION['currentMonthExpenses'] = $resultCurrentMonthExpenses->fetch_all();
 				
+				
 				$resultPreviousMonthIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$previousMonth'");				
 				if (!$resultPreviousMonthIncomes) throw new Exception($connection->error);
 				$_SESSION['previousMonthIncomes'] = $resultPreviousMonthIncomes->fetch_all();
 				
+				
 				$resultPreviousMonthExpenses = $connection->query("SELECT * FROM `expenses` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_expense) = '$previousMonth'");				
 				if (!$resultPreviousMonthExpenses) throw new Exception($connection->error);
 				$_SESSION['previousMonthExpenses'] = $resultPreviousMonthExpenses->fetch_all();
+			
+				if (isset($_POST['beginningDate']))
+				{
+					$beginningDate = $_POST['beginningDate'];
+					$endingDate = $_POST['endingDate'];
+					
+					$resultSelectedPeriodIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND date_of_income BETWEEN '$beginningDate' AND '$endingDate'");				
+					if (!$resultSelectedPeriodIncomes) throw new Exception($connection->error);
+					$_SESSION['selectedPeriodIncomes'] = $resultSelectedPeriodIncomes->fetch_all();
+				}
 			
 			}
 		
@@ -367,15 +376,9 @@
 											</table>
 											<?php
 											echo "Suma wydatków: ".$SESSION_['previousMonthExpenseSum']." zł";
-											?>
-										
-												
-											
-												
+											?>					
 											
 										</div>
-										
-											
 								
 									</div>
 									
@@ -393,22 +396,23 @@
 							
 							
 							<div class="tab-pane fade" id="selectedPeriod" role="tabpanel" aria-labelledby="selectedPeriod-tab">
-								<form>
+								<form method="post">
 									<div class="row">
-										<div class="form-group col-8 offset-2 col-lg-5 offset-lg-1">
-										<label for="beginningDate">Data początkowa</label>
-										<input type="date" class="form-control" id="beginningDate" required>
-										</div>
 										
-										<div class="form-group col-8 offset-2 col-lg-5 offset-lg-0">
-										<label for="endingDate">Data końcowa</label>
-										<input type="date" class="form-control" id="endingDate" required>
-										</div>
+											<div class="form-group col-8 offset-2 col-lg-5 offset-lg-1">
+											<label for="beginningDate">Data początkowa</label>
+											<input type="date" class="form-control" id="beginningDate" name="beginningDate" required>
+											</div>
+											
+											<div class="form-group col-8 offset-2 col-lg-5 offset-lg-0">
+											<label for="endingDate">Data końcowa</label>
+											<input type="date" class="form-control" id="endingDate" name="endingDate" required>
+											</div>
+
 									</div>
 									<button type="submit" class="btn mb-2 accountIntroduction">Wyszukaj</button>
-									
 								</form>
-								
+			
 								
 								<div class="col-12 text-center mb-5 mt-lg-3 mr-0 bg-white">
 						
@@ -421,63 +425,29 @@
 											<table class="table table-bordered">
 											  <thead>
 												<tr>
-												  <th>#</th>
-												  <th>Data</th>
-												  <th>Wydatek</th>
-												  <th>Kwota</th>
-												  <th>Opis</th>
-												  <th>#</th>
+													<th>Data</th>
+													<th>Przychód</th>
+													 <th>Kwota</th>
+													 <th>Opis</th>
 												</tr>
 											  </thead>
 											  <tbody>
-												<tr>
-													<th scope="row">1</th>
-													<td>22-11</td>
-													<td>Higiena</td>
-													<td>10,00</td>
-													<td>Szampon do włosów</td>
-													<td>
-														<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-														<i class="icon-trash"></i>
-														</button>
-													</td>
-												</tr>
-												<tr>
-													<th scope="row">2</th>
-													<td>01-12</td>
-													<td>Jedzenie</td>
-													<td>20,00</td>
-													<td>Zakupy Lidl</td>
-													<td>
-														<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-														<i class="icon-trash"></i>
-														</button>
-													</td>
-												</tr>
-												<tr>
-												  <th scope="row">3</th>
-												  <td>03-12</td>
-												  <td>Edukacja</td>
-												  <td>90,00</td>
-												  <td>Lekcja tańca</td>
-												  <td>
-													<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-													<i class="icon-trash"></i>
-													</button>
-												  </td>
-												</tr>
-												<tr>
-												  <th scope="row">4</th>
-												  <td>07-12</td>
-												  <td>Dom</td>
-												  <td>12,90</td>
-												  <td>Wycieraczka</td>
-												  <td>
-													<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal">
-													<i class="icon-trash"></i>
-													</button>
-												  </td>
-												</tr>
+												<?php
+												if (isset($_SESSION_['selectedPeriodIncomes']))
+												{
+													foreach ($_SESSION['selectedPeriodIncomes'] as $income) 
+													{			
+														$searchedIncomeCategory=$income[2];
+														$resultIncomeName = $connection->query("SELECT name FROM incomes_category_assigned_to_users WHERE id='$searchedIncomeCategory'");
+														$row = $resultIncomeName->fetch_assoc();
+														$incomeName = $row['name'];
+														
+														$SESSION_['selectedPeriodIncomeSum']+=$income[3];
+														
+														echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+													}
+												}
+												?>
 											  </tbody>
 											</table>
 											Suma wydatków: 200,00zł
