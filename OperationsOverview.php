@@ -50,7 +50,7 @@
 			}
 		
 		
-		$connection->close();
+		
 		
 	}
 	
@@ -156,7 +156,7 @@
 						
 						</ul>
 						
-						<a class="nav-link contactInvitation"  href="Registration.php">Wyloguj się</a>
+						<a class="nav-link contactInvitation"  href="Logout.php">Wyloguj się</a>
 				
 					</div>
 								
@@ -209,7 +209,12 @@
 												<?php
 												foreach ($_SESSION['currentMonthIncomes'] as $income) 
 												{
-													echo "<tr><td>{$income[4]}</td><td>{$income[2]}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+													$searchedIncomeCategory=$income[2];
+													$resultIncomeName = $connection->query("SELECT name FROM incomes_category_assigned_to_users WHERE id='$searchedIncomeCategory'");
+													$row = $resultIncomeName->fetch_assoc();
+													$incomeName = $row['name'];
+													
+													echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
 												}
 												?>
 											  </tbody>
@@ -240,7 +245,20 @@
 												<?php
 												foreach ($_SESSION['currentMonthExpenses'] as $expense) 
 												{
-													echo "<tr><td>{$expense[5]}</td><td>{$expense[2]}</td><td>{$expense[4]}</td><td>{$expense[3]}</td><td>{$expense[6]}</td></tr>"; 
+													$searchedExpenseCategory=$expense[2];
+													$searchedPaymentMethodCategory=$expense[3];
+													
+													$resultExpenseName = $connection->query("SELECT name FROM expenses_category_assigned_to_users WHERE id='$searchedExpenseCategory'");
+													if (!$resultExpenseName) throw new Exception($connection->error);
+													$row = $resultExpenseName->fetch_assoc();
+													$expenseName = $row['name'];
+													
+													$resultPaymentMethodName = $connection->query("SELECT name FROM payment_methods_assigned_to_users WHERE id='$searchedPaymentMethodCategory'");
+													if (!$resultPaymentMethodName) throw new Exception($connection->error);
+													$row = $resultPaymentMethodName->fetch_assoc();
+													$paymentMethodName = $row['name'];
+													
+													echo "<tr><td>{$expense[5]}</td><td>{$expenseName}</td><td>{$expense[4]}</td><td>{$paymentMethodName}</td><td>{$expense[6]}</td></tr>"; 
 												}
 												?>
 											  </tbody>
@@ -283,8 +301,13 @@
 											  <tbody>
 												<?php
 												foreach ($_SESSION['previousMonthIncomes'] as $income) 
-												{
-													echo "<tr><td>{$income[4]}</td><td>{$income[2]}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+												{			
+													$searchedIncomeCategory=$income[2];
+													$resultIncomeName = $connection->query("SELECT name FROM incomes_category_assigned_to_users WHERE id='$searchedIncomeCategory'");
+													$row = $resultIncomeName->fetch_assoc();
+													$incomeName = $row['name'];
+													
+													echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
 												}
 												?>
 											  </tbody>
@@ -296,13 +319,26 @@
 										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
 											
 											
-											<h1 class="h3">Przegląd przychodów</h1>
+											<h1 class="h3">Przegląd wydatków</h1>
 											
 											<table class="table table-bordered">
 											  <?php
 												foreach ($_SESSION['previousMonthExpenses'] as $expense) 
 												{
-													echo "<tr><td>{$expense[5]}</td><td>{$expense[2]}</td><td>{$expense[4]}</td><td>{$expense[3]}</td><td>{$expense[6]}</td></tr>"; 
+													$searchedExpenseCategory=$expense[2];
+													$searchedPaymentMethodCategory=$expense[3];
+													
+													$resultExpenseName = $connection->query("SELECT name FROM expenses_category_assigned_to_users WHERE id='$searchedExpenseCategory'");
+													if (!$resultExpenseName) throw new Exception($connection->error);
+													$row = $resultExpenseName->fetch_assoc();
+													$expenseName = $row['name'];
+													
+													$resultPaymentMethodName = $connection->query("SELECT name FROM payment_methods_assigned_to_users WHERE id='$searchedPaymentMethodCategory'");
+													if (!$resultPaymentMethodName) throw new Exception($connection->error);
+													$row = $resultPaymentMethodName->fetch_assoc();
+													$paymentMethodName = $row['name'];
+													
+													echo "<tr><td>{$expense[5]}</td><td>{$expenseName}</td><td>{$expense[4]}</td><td>{$paymentMethodName}</td><td>{$expense[6]}</td></tr>"; 
 												}
 												?>
 											</table>
