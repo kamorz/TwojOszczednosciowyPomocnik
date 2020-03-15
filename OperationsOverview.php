@@ -9,6 +9,11 @@
 	$currentMonth = date("m");
 	$previousMonth = date("m")-1;
 
+	$SESSION_['currentMonthIncomeSum']=0;
+	$SESSION_['currentMonthExpenseSum']=0;
+	$SESSION_['previousMonthIncomeSum']=0;
+	$SESSION_['previousMonthExpenseSum']=0;
+
 	require_once 'connect.php';
 
 	$_SESSION['currentUserId']= $_SESSION['loggedUserId'];
@@ -214,13 +219,17 @@
 													$row = $resultIncomeName->fetch_assoc();
 													$incomeName = $row['name'];
 													
+													$SESSION_['currentMonthIncomeSum']+=$income[3];
+													
 													echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+													
+													
 												}
 												?>
 											  </tbody>
 											</table>
 											<?php
-											echo "Suma przychodów: ";
+											echo "Suma przychodów: ".$SESSION_['currentMonthIncomeSum']." zł";
 											?>
 											
 										</div>
@@ -258,13 +267,16 @@
 													$row = $resultPaymentMethodName->fetch_assoc();
 													$paymentMethodName = $row['name'];
 													
+													$SESSION_['currentMonthExpenseSum']+=$expense[4];
+													
 													echo "<tr><td>{$expense[5]}</td><td>{$expenseName}</td><td>{$expense[4]}</td><td>{$paymentMethodName}</td><td>{$expense[6]}</td></tr>"; 
 												}
 												?>
 											  </tbody>
 											</table>
-											Suma przychodów: 1000,00zł
-											
+											<?php
+											echo "Suma wydatków: ".$SESSION_['currentMonthExpenseSum']." zł";
+											?>					
 											
 										</div>
 										
@@ -274,7 +286,12 @@
 						
 								</div>
 								
-								<h2 class="h3">Bilans wybranego okresu: + 500zł</h2>
+								<h2 class="h3">
+											<?php
+											$totalCurrentMonthBalance=$SESSION_['currentMonthIncomeSum']-$SESSION_['currentMonthExpenseSum'];
+											echo "Bilans bieżącego miesiąca: ".$totalCurrentMonthBalance." zł";
+											?>	
+								</h2>
 						  
 							</div>
 						 
@@ -307,12 +324,16 @@
 													$row = $resultIncomeName->fetch_assoc();
 													$incomeName = $row['name'];
 													
+													$SESSION_['previousMonthIncomeSum']+=$income[3];
+													
 													echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
 												}
 												?>
 											  </tbody>
 											</table>
-											Suma wydatków: 200,00zł
+											<?php
+											echo "Suma przychodów: ".$SESSION_['previousMonthIncomeSum']." zł";
+											?>
 											
 										</div>
 										
@@ -338,11 +359,15 @@
 													$row = $resultPaymentMethodName->fetch_assoc();
 													$paymentMethodName = $row['name'];
 													
+													$SESSION_['previousMonthExpenseSum']+=$expense[4];
+													
 													echo "<tr><td>{$expense[5]}</td><td>{$expenseName}</td><td>{$expense[4]}</td><td>{$paymentMethodName}</td><td>{$expense[6]}</td></tr>"; 
 												}
 												?>
 											</table>
-											Suma przychodów: 1200,00zł
+											<?php
+											echo "Suma wydatków: ".$SESSION_['previousMonthExpenseSum']." zł";
+											?>
 										
 												
 											
@@ -354,7 +379,12 @@
 								
 									</div>
 									
-									<h2 class="h3">Bilans wybranego okresu: + 300zł</h2>
+									<h2 class="h3">
+											<?php
+											$totalPreviousMonthBalance=$SESSION_['previousMonthIncomeSum']-$SESSION_['previousMonthExpenseSum'];
+											echo "Bilans poprzedniego miesiąca: ".$totalPreviousMonthBalance." zł";
+											?>	
+								</h2>
 						
 								</div>
 							</div>
