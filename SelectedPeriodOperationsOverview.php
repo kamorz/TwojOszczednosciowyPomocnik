@@ -6,13 +6,7 @@
 		header('Location: index.php');
 		exit();
 	}
-	$currentMonth = date("m");
-	$previousMonth = date("m")-1;
 
-	$SESSION_['currentMonthIncomeSum']=0;
-	$SESSION_['currentMonthExpenseSum']=0;
-	$SESSION_['previousMonthIncomeSum']=0;
-	$SESSION_['previousMonthExpenseSum']=0;
 	$SESSION_['selectedPeriodIncomeSum']=0;
 	$SESSION_['selectedPeriodExpenseSum']=0;
 
@@ -31,40 +25,32 @@
 			throw new Exception(mysqli_connect_errno());
 		}
 		else
-			{
-				$resultCurrentMonthIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$currentMonth'");				
-				if (!$resultCurrentMonthIncomes) throw new Exception($connection->error);
-				$_SESSION['currentMonthIncomes'] = $resultCurrentMonthIncomes->fetch_all();
-				
-				
-				$resultCurrentMonthExpenses = $connection->query("SELECT * FROM `expenses` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_expense) = '$currentMonth'");				
-				if (!$resultCurrentMonthExpenses) throw new Exception($connection->error);
-				$_SESSION['currentMonthExpenses'] = $resultCurrentMonthExpenses->fetch_all();
-				
-				
-				$resultPreviousMonthIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$previousMonth'");				
-				if (!$resultPreviousMonthIncomes) throw new Exception($connection->error);
-				$_SESSION['previousMonthIncomes'] = $resultPreviousMonthIncomes->fetch_all();
-				
-				
-				$resultPreviousMonthExpenses = $connection->query("SELECT * FROM `expenses` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_expense) = '$previousMonth'");				
-				if (!$resultPreviousMonthExpenses) throw new Exception($connection->error);
-				$_SESSION['previousMonthExpenses'] = $resultPreviousMonthExpenses->fetch_all();
-			
+			{		
 				if (isset($_POST['beginningDate']))
 				{
 					$beginningDate = $_POST['beginningDate'];
 					$endingDate = $_POST['endingDate'];
 					
+					$SESSION_['beginningDateToDisplay'] = $_POST['beginningDate'];
+					$SESSION_['endingDateToDisplay'] = $_POST['endingDate'];
+					
+					
 					$resultSelectedPeriodIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND date_of_income BETWEEN '$beginningDate' AND '$endingDate'");				
 					if (!$resultSelectedPeriodIncomes) throw new Exception($connection->error);
 					$_SESSION['selectedPeriodIncomes'] = $resultSelectedPeriodIncomes->fetch_all();
+					
+					$resultSelectedPeriodExpenses = $connection->query("SELECT * FROM `expenses` WHERE user_id='$idForSearching' AND date_of_expense BETWEEN '$beginningDate' AND '$endingDate'");				
+					if (!$resultSelectedPeriodExpenses) throw new Exception($connection->error);
+					$_SESSION['selectedPeriodExpenses'] = $resultSelectedPeriodExpenses->fetch_all();
+					
+					$_SESSION['ilosc'] = $resultSelectedPeriodIncomes->num_rows;
+					
+					unset($_SESSION['beginningDate']);
+					unset($_SESSION['endingDate']);
 				}
 			
 			}
-		
-		
-		
+	
 		
 	}
 	
@@ -181,22 +167,19 @@
 			
 				<div class="col-10 offset-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
 
-						
-							<div class="row">	
-							
-
 								<form method="post">
 									<div class="row">
-										
-											<div class="form-group col-8 offset-2 col-lg-5 offset-lg-1">
-											<label for="beginningDate">Data początkowa</label>
-											<input type="date" class="form-control" id="beginningDate" name="beginningDate" required>
-											</div>
 											
-											<div class="form-group col-8 offset-2 col-lg-5 offset-lg-0">
-											<label for="endingDate">Data końcowa</label>
-											<input type="date" class="form-control" id="endingDate" name="endingDate" required>
-											</div>
+												<div class="form-group col-8 offset-2 col-lg-5 offset-lg-1">
+												<label for="beginningDate">Data początkowa</label>
+												<input type="date" class="form-control" id="beginningDate" name="beginningDate" required>
+												</div>
+											
+												<div class="form-group col-8 offset-2 col-lg-5 offset-lg-0">
+												<label for="endingDate">Data końcowa</label>
+												<input type="date" class="form-control" id="endingDate" name="endingDate" required>
+												</div>
+											
 
 									</div>
 									<button type="submit" class="btn mb-2 accountIntroduction">Wyszukaj</button>
@@ -207,9 +190,18 @@
 						
 									<div class="row">
 										
-										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white tab-content">
 										
-											<h1 class="h3">Przegląd wydatków</h1>
+											<h1 class="h3">Przegląd przychodów <br/>
+											
+											<?php
+											if (isset($_POST['beginningDate']))
+											{
+											echo $SESSION_['beginningDateToDisplay']."   -  ".$SESSION_['endingDateToDisplay'];
+											}
+											?>
+											
+											</h1>
 											
 											<table class="table table-bordered">
 											  <thead>
@@ -222,89 +214,109 @@
 											  </thead>
 											  <tbody>
 												<?php
-												if (isset($_SESSION_['selectedPeriodIncomes']))
-												{
-													foreach ($_SESSION['selectedPeriodIncomes'] as $income) 
-													{			
-														$searchedIncomeCategory=$income[2];
-														$resultIncomeName = $connection->query("SELECT name FROM incomes_category_assigned_to_users WHERE id='$searchedIncomeCategory'");
-														$row = $resultIncomeName->fetch_assoc();
-														$incomeName = $row['name'];
-														
-														$SESSION_['selectedPeriodIncomeSum']+=$income[3];
-														
-														echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+													if (isset($_POST['beginningDate']))
+													{
+														foreach ($_SESSION['selectedPeriodIncomes'] as $income) 
+														{			
+															$searchedIncomeCategory=$income[2];
+															$resultIncomeName = $connection->query("SELECT name FROM incomes_category_assigned_to_users WHERE id='$searchedIncomeCategory'");
+															$row = $resultIncomeName->fetch_assoc();
+															$incomeName = $row['name'];
+															
+															$SESSION_['selectedPeriodIncomeSum']+=$income[3];
+															
+															echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+															
+															unset($_SESSION['selectedPeriodIncomes']);
+														}
 													}
-												}
 												?>
 											  </tbody>
 											</table>
-											Suma wydatków: 200,00zł
+											<?php
+											echo "Suma przychodów: ".$SESSION_['selectedPeriodIncomeSum']." zł";
+											?>
 											
 										</div>
 										
-										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white tab-content">
 											
 											
-											<h1 class="h3">Przegląd przychodów</h1>
+											<h1 class="h3">Przegląd wydatków<br/>
+											
+											<?php
+											if (isset($_POST['beginningDate']))
+											{
+											echo $SESSION_['beginningDateToDisplay']."   -  ".$SESSION_['endingDateToDisplay'];
+											}
+											?>
+											
+											</h1>
 											
 											<table class="table table-bordered">
 											  <thead>
 												<tr>
-												  <th>#</th>
-												  <th>Data</th>
-												  <th>Wydatek</th>
-												  <th>Kwota</th>
-												  <th>Opis</th>
-												  <th>#</th>
+													<th>Data</th>
+													 <th>Wydatek</th>
+													 <th>Kwota</th>
+													 <th>Sposób płatności</th>
+													 <th>Opis</th>
 												</tr>
 											  </thead>
 											  <tbody>
 												<?php
-												if (isset($_SESSION_['selectedPeriodIncomes']))
-												{
-													foreach ($_SESSION['selectedPeriodIncomes'] as $income) 
-													{			
-														$searchedIncomeCategory=$income[2];
-														$resultIncomeName = $connection->query("SELECT name FROM incomes_category_assigned_to_users WHERE id='$searchedIncomeCategory'");
-														$row = $resultIncomeName->fetch_assoc();
-														$incomeName = $row['name'];
-														
-														$SESSION_['selectedPeriodIncomeSum']+=$income[3];
-														
-														echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+													if (isset($_POST['beginningDate']))
+													{
+														foreach ($_SESSION['selectedPeriodExpenses'] as $expense) 
+														{
+															$searchedExpenseCategory=$expense[2];
+															$searchedPaymentMethodCategory=$expense[3];
+															
+															$resultExpenseName = $connection->query("SELECT name FROM expenses_category_assigned_to_users WHERE id='$searchedExpenseCategory'");
+															if (!$resultExpenseName) throw new Exception($connection->error);
+															$row = $resultExpenseName->fetch_assoc();
+															$expenseName = $row['name'];
+															
+															$resultPaymentMethodName = $connection->query("SELECT name FROM payment_methods_assigned_to_users WHERE id='$searchedPaymentMethodCategory'");
+															if (!$resultPaymentMethodName) throw new Exception($connection->error);
+															$row = $resultPaymentMethodName->fetch_assoc();
+															$paymentMethodName = $row['name'];
+															
+															$SESSION_['selectedPeriodExpenseSum']+=$expense[4];
+															
+															echo "<tr><td>{$expense[5]}</td><td>{$expenseName}</td><td>{$expense[4]}</td><td>{$paymentMethodName}</td><td>{$expense[6]}</td></tr>"; 
+															
+															unset($_SESSION['selectedPeriodExpenses']);
+														}
 													}
-												}
+	
 												?>
 											  </tbody>
 											</table>
-											Suma przychodów: 1200,00zł			
+											<?php
+											echo "Suma wydatków: ".$SESSION_['selectedPeriodExpenseSum']." zł";
+											?>
+											
+											<h2 class="h3">
+												<br/><br/>
+												<?php
+												$totalSelectedPeriodBalance=$SESSION_['selectedPeriodIncomeSum']-$SESSION_['selectedPeriodExpenseSum'];
+												echo "Bilans wybranego okresu: ".$totalSelectedPeriodBalance." zł";
+												?>
+									
+											</h2>
+											
+
+											
 											
 										</div>
 
 									
-									<h2 class="h3">Bilans wybranego okresu: + 300zł</h2>
-						
-								</div>
+									
 											
 							</div>
 
-						</div>
-						
-						
-						<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-label="deleteLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-body">
-									Czy usunąć tę pozycję?
-									</div>
-														
-									<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">Tak</button>
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">Nie</button>
-									</div>
-								</div>
-							</div>		
+						</div>		
 
 				
 			
