@@ -6,7 +6,11 @@
 		header('Location: index.php');
 		exit();
 	}
+	$currentMonth = date("m");
+	$previousMonth = date("m")-1;
 
+	$SESSION_['previousMonthIncomeSum']=0;
+	$SESSION_['previousMonthExpenseSum']=0;
 
 	require_once 'connect.php';
 
@@ -22,57 +26,34 @@
 		{
 			throw new Exception(mysqli_connect_errno());
 		}
-		
 		else
 			{
-				$resultCategories = $connection->query("SELECT * FROM expenses_category_assigned_to_users WHERE user_id=$idForSearching");
 				
-				if (!$resultCategories) throw new Exception($connection->error);
-				$_SESSION['categoriesAmount']= $resultCategories->num_rows;
-				$_SESSION['categories'] = $resultCategories->fetch_all();
+				$resultPreviousMonthIncomes = $connection->query("SELECT * FROM `incomes` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_income) = '$previousMonth'");				
+				if (!$resultPreviousMonthIncomes) throw new Exception($connection->error);
+				$_SESSION['previousMonthIncomes'] = $resultPreviousMonthIncomes->fetch_all();
 				
 				
-				$resultPaymentMethods = $connection->query("SELECT * FROM payment_methods_assigned_to_users WHERE user_id=$idForSearching");
-				
-				if (!$resultPaymentMethods) throw new Exception($connection->error);
-				$_SESSION['methodsAmount']= $resultPaymentMethods->num_rows;
-				$_SESSION['paymentMethods'] = $resultPaymentMethods->fetch_all();
+				$resultPreviousMonthExpenses = $connection->query("SELECT * FROM `expenses` WHERE user_id='$idForSearching' AND EXTRACT(month FROM date_of_expense) = '$previousMonth'");				
+				if (!$resultPreviousMonthExpenses) throw new Exception($connection->error);
+				$_SESSION['previousMonthExpenses'] = $resultPreviousMonthExpenses->fetch_all();
+			
 			}
 		
-			if (isset($_POST['category']))
-			{
-				$category = $_POST['category'];
-				$date = $_POST['date'];
-				$addDesc = $_POST['addDesc'];
-				$cash = $_POST['cash'];
-				$paymentMethod = $_POST['paymentMethod'];
-				
-				$resultCategoryId = $connection->query("SELECT id FROM expenses_category_assigned_to_users WHERE user_id=$idForSearching AND name='$category'");
-				if (!$resultCategoryId) throw new Exception($connection->error);
-				$row = $resultCategoryId->fetch_assoc();
-				$categoryId = $row['id'];
-				
-				$resultPaymentId = $connection->query("SELECT id FROM payment_methods_assigned_to_users WHERE user_id=$idForSearching AND name='$paymentMethod'");
-				if (!$resultPaymentId) throw new Exception($connection->error);
-				$row = $resultPaymentId->fetch_assoc();
-				$paymentMethodId = $row['id'];
-				
-				$connection->query("INSERT INTO expenses VALUES (NULL, '$idForSearching', '$categoryId' ,  '$paymentMethodId',  '$cash', '$date', '$addDesc')");
-				
-				header('Location: UserMainMenu.php');
-			}
 		
-		$connection->close();
+		
+		
 	}
 	
-		
-		
 	catch(Exception $e)
 	{
 		echo '<span style="color:red;">Błąd serwera! Przepraszamy za niedogodności.</span>';
 		echo '<br />Informacja developerska: '.$e;
 	}
-
+		
+	
+	
+	
 ?>
 
 <!DOCTYPE html>
@@ -174,64 +155,106 @@
 			</div>		
 				
 			<div class="row">
-				<div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 text-center mb-5 mr-0 bg-white loginForm">
-					
-				<h1 class="h2 mb-3">DODAWANIE WYDATKÓW </h1>
-					
-					<form method="post">
-							
-						<div class="form-group col-6 offset-3">
-							<label for="expenseType">Rodzaj wydatku</label>
-							<select class="form-control" id="expenseType" name="category" >
-								 
-								 <?php
+			
+				<div class="col-10 offset-1 text-center mb-5 mt-lg-3 mr-0 bg-white">
+				
+					<div class="row">
 										
-										foreach ($_SESSION['categories'] as $ctg) 
-										{
-											echo "<option>{$ctg[2]}</option>";
-										}
-								?>	
-								 
-							</select>
-						</div>
-							
-						<div class="form-group col-6 offset-3">
-							<label for="amount">Kwota (zł)</label>
-							<input type="number" class="form-control" id="amount" step="0.01" name="cash" required>
-						</div>	
-						
-						<div class="form-group col-6 offset-3">
-							<label for="expenseDate">Data</label>
-							<input type="date" class="form-control" id="expenseDate" name="date" required>
-							
-						</div>
-						
-						<div class="form-group col-6 offset-3">
-							<label for="paymentType">Metoda płatności</label>
-							<select class="form-control" id="paymentType" name="paymentMethod" >
-								 
-								 <?php
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white tab-content">
 										
-										foreach ($_SESSION['paymentMethods'] as $mtd) 
-										{
-											echo "<option>{$mtd[2]}</option>";
-										}
-								?>	
-								 
-							</select>
-						</div>
-						
-						<div class="form-group col-6 offset-3">
-							<label for="extraDescription">Dodatkowy opis</label>
-							<textarea class="form-control" id="extraDescription" rows="2" name="addDesc" placeholder="Pole opcjonalne"></textarea>
-						</div>
-						
-						<button type="submit" class="btn mb-2 accountIntroduction">ZATWIERDŹ</button>
+											<h1 class="h3">Przegląd przychodów - poprzedni miesiąc</h1>
+											
+											<table class="table table-bordered">
+											  <thead>
+													<tr>
+													  <th>Data</th>
+													  <th>Przychód</th>
+													  <th>Kwota</th>
+													  <th>Opis</th>
+													</tr>
+												
+											  </thead>
+											  <tbody>
+												<?php
+												foreach ($_SESSION['previousMonthIncomes'] as $income) 
+												{			
+													$searchedIncomeCategory=$income[2];
+													$resultIncomeName = $connection->query("SELECT name FROM incomes_category_assigned_to_users WHERE id='$searchedIncomeCategory'");
+													$row = $resultIncomeName->fetch_assoc();
+													$incomeName = $row['name'];
+													
+													$SESSION_['previousMonthIncomeSum']+=$income[3];
+													
+													echo "<tr><td>{$income[4]}</td><td>{$incomeName}</td><td>{$income[3]}</td><td>{$income[5]}</td></tr>"; 
+												}
+												?>
+											  </tbody>
+											</table>
+											<?php
+											echo "Suma przychodów: ".$SESSION_['previousMonthIncomeSum']." zł";
+											?>
+											
+										</div>
+										
+										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white tab-content">
+											
+											
+											<h1 class="h3">Przegląd wydatków - poprzedni miesiąc</h1>
+											
+											<table class="table table-bordered">
+											  <thead>
+													<tr>
+													  <th>Data</th>
+													  <th>Wydatek</th>
+													  <th>Kwota</th>
+													  <th>Sposób płatności</th>
+													  <th>Opis</th>
+													</tr>
+												
+											  </thead>
+											  <tbody>
+												<?php
+												foreach ($_SESSION['previousMonthExpenses'] as $expense) 
+												{
+													$searchedExpenseCategory=$expense[2];
+													$searchedPaymentMethodCategory=$expense[3];
+													
+													$resultExpenseName = $connection->query("SELECT name FROM expenses_category_assigned_to_users WHERE id='$searchedExpenseCategory'");
+													if (!$resultExpenseName) throw new Exception($connection->error);
+													$row = $resultExpenseName->fetch_assoc();
+													$expenseName = $row['name'];
+													
+													$resultPaymentMethodName = $connection->query("SELECT name FROM payment_methods_assigned_to_users WHERE id='$searchedPaymentMethodCategory'");
+													if (!$resultPaymentMethodName) throw new Exception($connection->error);
+													$row = $resultPaymentMethodName->fetch_assoc();
+													$paymentMethodName = $row['name'];
+													
+													$SESSION_['previousMonthExpenseSum']+=$expense[4];
+													
+													echo "<tr><td>{$expense[5]}</td><td>{$expenseName}</td><td>{$expense[4]}</td><td>{$paymentMethodName}</td><td>{$expense[6]}</td></tr>"; 
+												}
+												?>
+											  </tbody>
+											</table>
+											<?php
+											echo "Suma wydatków: ".$SESSION_['previousMonthExpenseSum']." zł";
+											?>	
+											<h2 class="h3">
+												<br/><br/>
+												<?php
+												$totalPreviousMonthBalance=$SESSION_['previousMonthIncomeSum']-$SESSION_['previousMonthExpenseSum'];
+												echo "Bilans poprzedniego miesiąca: ".$totalPreviousMonthBalance." zł";
+												?>	
+											</h2>
+											
+										</div>
 
-							
-					</form>
-					
+									</div>
+						
+								</div>
+
 				</div>
+					
 			</div>
 				
 			

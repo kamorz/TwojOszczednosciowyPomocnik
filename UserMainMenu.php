@@ -86,9 +86,9 @@
 								
 								<div class="dropdown-menu" aria-labelledby="submenu2">
 								
-									<a class="dropdown-item" href="OperationsOverview.php#currentMonth-tab"> Bilans obecnego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.php#previousMonth-tab"> Bilans poprzedniego miesiąca </a>
-									<a class="dropdown-item" href="OperationsOverview.php#selectedPeriod-tab"> Bilans wybranego okresu </a>
+									<a class="dropdown-item" href="CurrentMonthOperationsOverview.php"> Bilans obecnego miesiąca </a>
+									<a class="dropdown-item" href="PreviousMonthOperationsOverview.php"> Bilans poprzedniego miesiąca </a>
+									<a class="dropdown-item" href="SelectedPeriodOperationsOverview.php"> Bilans wybranego okresu </a>
 								
 								</div>
 						

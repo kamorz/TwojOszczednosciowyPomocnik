@@ -57,7 +57,7 @@
 			<div class="row">
 				<nav class="navbar navbar-dark bg-openMenu navbar-expand-md col-12">
 				
-					<a class="navbar-brand" href="MainPage.html"><i class="icon-dollar"></i> TWÓJ OP </a>
+					<a class="navbar-brand" href="index.html"><i class="icon-dollar"></i> TWÓJ OP </a>
 					
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainmenu" aria-controls="mainmenu" aria-expanded="false" aria-label="Przełącznik nawigacji">
 					<span class="navbar-toggler-icon"></span>
