@@ -159,7 +159,7 @@
 										
 										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white tab-content">
 										
-											<h1 class="h3">Przegląd przychodów</h1>
+											<h1 class="h3">Przegląd przychodów- bieżący miesiąc</h1>
 											
 											<table class="table table-bordered">
 											  <thead>
@@ -198,7 +198,7 @@
 										<div class="col-12 col-lg-10 offset-lg-1 text-center mb-5 mt-lg-3 mr-0 bg-white tab-content">
 											
 											
-											<h1 class="h3">Przegląd wydatków</h1>
+											<h1 class="h3">Przegląd wydatków- bieżący miesiąc</h1>
 											
 											<table class="table table-bordered">
 											  <thead>
